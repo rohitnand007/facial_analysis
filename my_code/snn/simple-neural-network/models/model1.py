@@ -9,7 +9,6 @@ from keras.layers.convolutional import Convolution2D, MaxPooling2D, ZeroPadding2
 from keras.layers import Input, Dense, Dropout, Activation, Flatten
 from keras.layers.advanced_activations import PReLU
 import keras
-import keras
 
 def test_method():
 	print("++++++++++++++++++++++++++++++++++++++++++++Printing LOG line++++++++++++++++++++++++")
@@ -96,6 +95,71 @@ def define_model2(trainData, trainLabels, testData, testLabels, output_model_pat
 	print("[INFO] evaluating on testing set...")
 	(loss, accuracy) = model.evaluate(testData, testLabels,
 		batch_size=128, verbose=1)
+	print("[INFO] loss={:.4f}, accuracy: {:.4f}%".format(loss,
+		accuracy * 100))
+	# dump the network architecture and weights to file
+	print("[INFO] dumping architecture and weights to file...")
+	model.save(output_model_path)
+	print("[INFO] process completed")	
+
+def VGG_16(trainData, trainLabels, testData, testLabels, output_model_path, weights_path=None):
+	model = Sequential()
+	model.add(ZeroPadding2D((1,1),input_shape=(48,48,3)))
+	model.add(Convolution2D(64, 3, 3, activation='relu'))
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(64, 3, 3, activation='relu'))
+	model.add(MaxPooling2D((2,2), strides=(2,2)))
+
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(128, 3, 3, activation='relu'))
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(128, 3, 3, activation='relu'))
+	model.add(MaxPooling2D((2,2), strides=(2,2)))
+
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(256, 3, 3, activation='relu'))
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(256, 3, 3, activation='relu'))
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(256, 3, 3, activation='relu'))
+	model.add(MaxPooling2D((2,2), strides=(2,2)))
+
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(512, 3, 3, activation='relu'))
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(512, 3, 3, activation='relu'))
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(512, 3, 3, activation='relu'))
+	model.add(MaxPooling2D((2,2), strides=(2,2)))
+
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(512, 3, 3, activation='relu'))
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(512, 3, 3, activation='relu'))
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Convolution2D(512, 3, 3, activation='relu'))
+	model.add(MaxPooling2D((2,2), strides=(2,2)))
+
+	model.add(Flatten())
+	model.add(Dense(1024, activation='relu'))
+	model.add(Dropout(0.5))
+	model.add(Dense(1024, activation='relu'))
+	model.add(Dropout(0.5))
+	model.add(Dense(7, activation='softmax'))
+
+	# train the model using SGD
+	print("[INFO] compiling model...")
+	sgd = SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)
+	model.compile(loss='categorical_crossentropy',
+	              optimizer=sgd,
+	              metrics=['accuracy'])
+	model.fit(trainData, trainLabels, epochs=250, batch_size=64,
+		verbose=1)
+
+	# show the accuracy on the testing set
+	print("[INFO] evaluating on testing set...")
+	(loss, accuracy) = model.evaluate(testData, testLabels,
+		batch_size=64, verbose=1)
 	print("[INFO] loss={:.4f}, accuracy: {:.4f}%".format(loss,
 		accuracy * 100))
 	# dump the network architecture and weights to file

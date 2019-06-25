@@ -88,7 +88,8 @@ testLabels = np_utils.to_categorical(testLabels, 7)
 
 def main():
 	#model1.define_model1(trainData, trainLabels, testData, testLabels, args['model'])
-	model1.define_model2(trainData, trainLabels, testData, testLabels, args['model'])
+	#model1.define_model2(trainData, trainLabels, testData, testLabels, args['model'])
+	model1.VGG_16(trainData, trainLabels, testData, testLabels, args['model'])
 
 if __name__ == '__main__':
 	# import sys
