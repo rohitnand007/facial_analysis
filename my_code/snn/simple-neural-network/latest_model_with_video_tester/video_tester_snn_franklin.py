@@ -65,8 +65,8 @@ try:
 
         _,frame = vs.read()
         total_frames +=1
-        #gray = frame #cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = imutils.rotate_bound(frame, 270)
+        gray = frame #cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        #gray = imutils.rotate_bound(frame, 270)
         # gray = imutils.resize(gray, width=500)
 
         # detect faces in the grayscale image
