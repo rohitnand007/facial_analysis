@@ -12,8 +12,8 @@ import cv2
 import imutils
 from keras.preprocessing.image import img_to_array
 from imutils import paths
-from imutils.video import FileVideoStream
-from imutils.video import VideoStream
+# from imutils.video import FileVideoStream
+# from imutils.video import VideoStream
 import csv
 
 # construct the argument parse and parse the arguments
@@ -45,6 +45,7 @@ total_frames = 0
 face_detected_frames = 0
 predicted_frames = 0
 emotions_counter = {"angry":0, "disgust":0, "fear":0, "happy":0, "sad":0, "surprise":0, "neutral":0}
+angry = disgust = fear = happy = sad = surprise = neutral = True
 
 # loading the trained NN model
 print("[INFO] loading the pre-trained model for emotion prediction......")
@@ -52,15 +53,16 @@ emotion_classifier = load_model(args['model'], compile=False)
 
 # start the video stream thread
 print("[INFO] starting video stream thread...")
-vs = FileVideoStream(args["video"]).start()
+#vs = FileVideoStream(args["video"]).start()
+vs = cv2.VideoCapture(args["video"])
 fileStream = True
 
 try:
     while True:
-        if fileStream and not vs.more():
-            break
+        # if fileStream and not vs.more():
+        #     break
 
-        frame = vs.read()
+        _,frame = vs.read()
         total_frames +=1
         #gray = frame #cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = imutils.rotate_bound(frame, 270)
@@ -91,9 +93,10 @@ try:
             label = "{}: {:.2f}%".format(emotions[preds.argmax()],
                 emotion_probability * 100)
             emotions_counter[label1] += 1
+
             print("=========preds:{} and emotion_probability:{} and label:{}".format(preds,emotion_probability,label))
-        # print("shape directly from faceutils nptoshape is:{}".format(type(shape)))
-        # print("shape directly from faceutils nptoshape is length:{}".format(len(shape)))
+            # print("shape directly from faceutils nptoshape is:{}".format(type(shape)))
+            # print("shape directly from faceutils nptoshape is length:{}".format(len(shape)))
 
 
             # convert dlib's rectangle to a OpenCV-style bounding box
@@ -112,6 +115,12 @@ try:
 
             cv2.putText(gray, label, (10, 35), cv2.FONT_HERSHEY_SIMPLEX,
                 1.0, (0, 255, 0), 3)    
+        #print out the first emotion detected with probablility greater than 85%
+
+        
+        if emotions_counter[label1] > 5 and vars()[label1] and emotion_probability > 0.80:
+            cv2.imwrite("output_pictures/" + label1 +".jpg",gray)
+            vars()[label1] = False    
 
         # show the output image with the face detections + facial landmarks
         # show the frame

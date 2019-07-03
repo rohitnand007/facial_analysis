@@ -45,6 +45,7 @@ total_frames = 0
 face_detected_frames = 0
 predicted_frames = 0
 emotions_counter = {"angry":0, "disgust":0, "fear":0, "happy":0, "sad":0, "surprise":0, "neutral":0}
+angry = disgust = fear = happy = sad = surprise = neutral = True
 
 # loading the trained NN model
 print("[INFO] loading the pre-trained model for emotion prediction......")
@@ -66,7 +67,7 @@ try:
         _,frame = vs.read()
         total_frames +=1
         gray = frame #cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        #gray = imutils.rotate_bound(frame, 270)
+        gray = imutils.rotate_bound(frame, 270)
         # gray = imutils.resize(gray, width=500)
 
         # detect faces in the grayscale image
@@ -95,7 +96,28 @@ try:
                 emotion_probability * 100)
             emotions_counter[label1] += 1
             print("=========preds:{} and emotion_probability:{} and label:{}".format(preds,emotion_probability,label))
-       
+
+            # convert dlib's rectangle to a OpenCV-style bounding box
+            # [i.e., (x, y, w, h)], then draw the face bounding box
+            (x, y, w, h) = face_utils.rect_to_bb(rect)
+            cv2.rectangle(gray, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+            # show the face number
+            cv2.putText(gray, "Face #{}".format(i + 1), (x - 10, y - 10),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+            # loop over the (x, y)-coordinates for the facial landmarks
+            # and draw them on the image
+            for (x, y) in shape:
+                cv2.circle(gray, (x, y), 1, (0, 0, 255), -1)
+
+            cv2.putText(gray, label, (10, 35), cv2.FONT_HERSHEY_SIMPLEX,
+                1.0, (0, 255, 0), 3)    
+        #print out the first emotion detected with probablility greater than 85%
+        if emotions_counter[label1] > 5 and vars()[label1] and emotion_probability > 0.80:
+            cv2.imwrite("output_pictures/"+ label1 +".jpg", gray)
+            vars()[label1] = False
+
 except Exception as e:
     raise e 
 else:
