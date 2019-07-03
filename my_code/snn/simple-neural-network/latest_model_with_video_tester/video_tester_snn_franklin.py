@@ -108,8 +108,8 @@ try:
 
             # loop over the (x, y)-coordinates for the facial landmarks
             # and draw them on the image
-            for (x, y) in shape:
-                cv2.circle(gray, (x, y), 1, (0, 0, 255), -1)
+            # for (x, y) in shape:
+            #     cv2.circle(gray, (x, y), 1, (0, 0, 255), -1)
 
             cv2.putText(gray, label, (10, 35), cv2.FONT_HERSHEY_SIMPLEX,
                 1.0, (0, 255, 0), 3)    
