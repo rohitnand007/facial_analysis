@@ -119,7 +119,7 @@ try:
 
         
         if emotions_counter[label1] < 5 and vars()[label1] and emotion_probability > 0.80:
-            cv2.imwrite("output_pictures/" + label1 +"time.strftime("%Y%m%d-%H%M%S").jpg",gray)
+            cv2.imwrite("output_pictures/" + label1 +str(int(time.time()))+".jpg",gray)
             vars()[label1] = False    
 
         # show the output image with the face detections + facial landmarks
