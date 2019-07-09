@@ -190,10 +190,10 @@ try:
 			cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),
 				cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 			# draw the Mar and total smile frames
-			cv2.putText(frame, "MAR: {}".format(mar), (300, 60), 
-				cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-			cv2.putText(frame, "Smile_frames: {}".format(total_smile_counter), (10, 90), 
-				cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+			# cv2.putText(frame, "MAR: {}".format(mar), (300, 60), 
+			# 	cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+			# cv2.putText(frame, "Smile_frames: {}".format(total_smile_counter), (10, 90), 
+			# 	cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 	 	# write to frame
 	 	if writer is None:
 		 	(h, w) = frame.shape[:2]
@@ -201,7 +201,7 @@ try:
 				(w , h), True)
 			zeros = np.zeros((h, w), dtype="uint8")	
 		# show the frame
-		cv2.imshow("Frame", frame)
+		# cv2.imshow("Frame", frame)
 		writer.write(frame)
 		key = cv2.waitKey(1) & 0xFF
 
@@ -248,3 +248,4 @@ finally:
 	with open('eye_blinks.csv', 'wb') as csvFile:
 		writer = csv.writer(csvFile)
 		writer.writerows(csvData) 
+
