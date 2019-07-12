@@ -88,13 +88,13 @@ def define_model2(trainData, trainLabels, testData, testLabels, output_model_pat
 	model.compile(loss='categorical_crossentropy',
 	              optimizer=ada,
 	              metrics=['accuracy'])
-	model.fit(trainData, trainLabels, epochs=45, batch_size=128,
+	model.fit(trainData, trainLabels, epochs=200, batch_size=64,
 		verbose=1)
 
 	# show the accuracy on the testing set
 	print("[INFO] evaluating on testing set...")
 	(loss, accuracy) = model.evaluate(testData, testLabels,
-		batch_size=128, verbose=1)
+		batch_size=64, verbose=1)
 	print("[INFO] loss={:.4f}, accuracy: {:.4f}%".format(loss,
 		accuracy * 100))
 	# dump the network architecture and weights to file
@@ -153,7 +153,7 @@ def VGG_16(trainData, trainLabels, testData, testLabels, output_model_path, weig
 	model.compile(loss='categorical_crossentropy',
 	              optimizer=sgd,
 	              metrics=['accuracy'])
-	model.fit(trainData, trainLabels, epochs=250, batch_size=64,
+	model.fit(trainData, trainLabels, epochs=100, batch_size=64,
 		verbose=1)
 
 	# show the accuracy on the testing set
