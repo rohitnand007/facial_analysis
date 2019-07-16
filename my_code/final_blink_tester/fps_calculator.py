@@ -37,7 +37,7 @@ while True:
 
 fps = vs.get(cv2.CAP_PROP_FPS)
 override = False if args["override"] < 0 else True
-total = 0#count_frames(args["video"], override=override)
+total = count_frames_manual(vs)#count_frames(args["video"], override=override)
 print("..........................................{}".format(fps))
 fps1.stop()
 elapsed = fps1.elapsed()
