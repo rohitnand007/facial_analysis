@@ -72,6 +72,7 @@ predictor = dlib.shape_predictor(args["shape_predictor"])
 print("[INFO] starting video stream thread...")
 vs = cv2.VideoCapture(args["video"]) #FileVideoStream(args["video"]).start()
 fps = fps_calculator(vs)
+print("=======================================================:{}".format(fps))
 
 # loop over frames from the video stream
 try:
