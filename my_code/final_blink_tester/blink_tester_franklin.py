@@ -141,6 +141,11 @@ try:
 					csvData.append([total_sec,blinks_in_sec])
 					blinks_in_sec = 0
 					current_sec = 0	
+				elif current_sec ==1 and detected_frames < int(0.6 * frames_in_sec):
+					frames_in_sec = 0
+					csvData.append([total_sec, -1])
+					blinks_in_sec = 0
+					current_sec = 0	
 	
 
 				cv2.destroyAllWindows()
