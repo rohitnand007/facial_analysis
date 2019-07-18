@@ -6,9 +6,6 @@
 # import the necessary packages
 from imutils.video.count_frames import *
 from imutils.video import FPS
-import imutils
-import time
-import dlib
 import cv2
 
 
@@ -19,7 +16,7 @@ def fps_calculator(video):
 		override = True
 		frame_count = count_frames_manual(video)
 		video.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
-		time_elaspsed = vs.get(cv2.CAP_PROP_POS_MSEC)/1000
+		time_elaspsed = video.get(cv2.CAP_PROP_POS_MSEC)/1000
 		fps = frame_count/float(time_elaspsed)
 	return fps	
 
