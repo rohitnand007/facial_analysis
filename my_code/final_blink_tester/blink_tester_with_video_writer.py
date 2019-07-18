@@ -174,9 +174,9 @@ try:
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
 				cv2.putText(frame, "detected_frames: {}".format(detected_frames), (300, 30),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-				cv2.putText(frame, "total_detected: {}".format(total_detected_frames),(10,60),
+				cv2.putText(frame, "total_detected: {}".format(total_detected_frames),(300,60),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
-				cv2.putText(frame, "blinks_in_sec: {}".format(blinks_in_sec), (300, 30),
+				cv2.putText(frame, "blinks_in_sec: {}".format(blinks_in_sec), (10, 90),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)		
 
 				# write to frame
