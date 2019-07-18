@@ -106,7 +106,7 @@ try:
 			if frames_in_sec == int(fps):
 				total_sec += 1
 				current_sec = 1
-				frames_in_sec = 0
+				frames_in_sec = 1
 			print(frames_in_sec)
 			#frame = imutils.rotate_bound(frame, 90)
 			# img_name = "junk_images/opencv_frame_{}.png".format(total_frame_counter)
@@ -157,13 +157,11 @@ try:
 					COUNTER = 0
 
 				if current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec):
-					frames_in_sec = 1
 					csvData.append([total_sec,blinks_in_sec])
 					blinks_in_sec = 0
 					current_sec = 0	
 					detected_frames = 1
 				elif current_sec ==1 and detected_frames < int(0.6 * frames_in_sec):
-					frames_in_sec = 1
 					csvData.append([total_sec, -1])
 					blinks_in_sec = 0
 					current_sec = 0	
