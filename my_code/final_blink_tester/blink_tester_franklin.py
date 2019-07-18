@@ -92,7 +92,7 @@ try:
 				total_sec += 1
 				current_sec = 1
 				frames_in_sec = 0
-			# print(frames_in_sec)
+			print(frames_in_sec)
 			#frame = imutils.rotate_bound(frame, 90)
 			# img_name = "junk_images/opencv_frame_{}.png".format(total_frame_counter)
   			#cv2.imwrite(img_name, frame)
