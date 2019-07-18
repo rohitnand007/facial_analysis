@@ -80,6 +80,7 @@ try:
 	# if this is a file video stream, then we need to check if
 	# there any more frames left in the buffer to process
 		(grabbed,frame) = vs.read()
+		print(grabbed)
 		if grabbed:
 			# grab the frame from the threaded video file stream, resize
 			# it, and convert it to grayscale channels)
