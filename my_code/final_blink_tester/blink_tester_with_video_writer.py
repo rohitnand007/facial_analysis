@@ -6,6 +6,7 @@
 from fps_calculator import fps_calculator
 from scipy.spatial import distance as dist
 from imutils import face_utils
+from imutils.video import FileVideoStream
 import numpy as np
 import argparse
 import imutils
@@ -36,6 +37,12 @@ def eye_aspect_ratio(eye):
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--shape-predictor", required=True,
 	help="path to facial landmark predictor")
+ap.add_argument("-o", "--output", type = str, default = "outputy.avi",
+	help="path to output video file")
+ap.add_argument("-f", "--fps", type=int, default=30,
+	help="FPS of output video")
+ap.add_argument("-c", "--codec", type=str, default="MJPG",
+	help="codec of output video")
 ap.add_argument("-v", "--video", required=True,
     help="path to input video ")
 args = vars(ap.parse_args())
@@ -51,10 +58,11 @@ COUNTER = 0
 TOTAL = 0
 frame_counter = 0
 frames_in_sec, detected_frames , total_sec, blinks_in_sec, current_sec = 0,0,0,0,0
+total_detected_frames = 0
+
 
 #initialize the container for CSV file
 csvData = [["in_sec","blinks_in_sec"]]
-
 
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
@@ -70,17 +78,22 @@ predictor = dlib.shape_predictor(args["shape_predictor"])
 
 # start the video stream thread
 print("[INFO] starting video stream thread...")
-vs = cv2.VideoCapture(args["video"]) #FileVideoStream(args["video"]).start()
+vs = cv2.VideoCapture(args["video"]) 
+#vs = FileVideoStream(args["video"]).start()
+#time.sleep(1.0)
 fps = fps_calculator(vs)
 print("=======================================================:{}".format(fps))
 
+fourcc = cv2.VideoWriter_fourcc(*args["codec"])
+writer = None
+(h, w) = (None, None)
+zeros = None
 # loop over frames from the video stream
 try:
 	while True:
 	# if this is a file video stream, then we need to check if
 	# there any more frames left in the buffer to process
 		(grabbed,frame) = vs.read()
-		print(grabbed)
 		if grabbed:
 			# grab the frame from the threaded video file stream, resize
 			# it, and convert it to grayscale channels)
@@ -99,10 +112,10 @@ try:
 			# img_name = "junk_images/opencv_frame_{}.png".format(total_frame_counter)
   			#cv2.imwrite(img_name, frame)
 			# detect faces in the grayscale frame
-			rects = detector(gray, 0) 
+			rects = detector(gray, 0)  	
 			if len(rects) > 0:
 				detected_frames += 1
-
+				total_detected_frames += 1
 			# loop over the face detections
 			for rect in rects:
 				# determine the facial landmarks for the face region, then
@@ -121,6 +134,13 @@ try:
 				# average the eye aspect ratio together for both eyes
 				ear = (leftEAR + rightEAR) / 2.0	
 
+				# compute the convex hull for the left and right eye, then
+				# visualize each of the eyes
+				leftEyeHull = cv2.convexHull(leftEye)
+				rightEyeHull = cv2.convexHull(rightEye)
+				cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)
+				cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)	
+
 				# check to see if the eye aspect ratio is below the blink
 				# threshold, and if so, increment the blink frame counter
 				if ear < EYE_AR_THRESH:
@@ -132,7 +152,7 @@ try:
 					# then increment the total number of blinks
 					if COUNTER >= EYE_AR_CONSEC_FRAMES:
 						TOTAL += 1
-						blinks_in_sec += 1
+						blinks_in_sec += 1						
 					# reset the eye frame counter
 					COUNTER = 0
 
@@ -147,13 +167,42 @@ try:
 					csvData.append([total_sec, -1])
 					blinks_in_sec = 0
 					current_sec = 0	
-					detected_frames = 1
-	
+					detected_frames = 1					
+				# draw the total number of blinks on the frame along with
+				# the computed eye aspect ratio for the frame
+				cv2.putText(frame, "total_sec: {}".format(total_sec), (10, 30),
+					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+				cv2.putText(frame, "frames_in_sec: {}".format(frames_in_sec),(10,60),
+					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
+				cv2.putText(frame, "detected_frames: {}".format(detected_frames), (300, 30),
+					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+				cv2.putText(frame, "total_detected: {}".format(total_detected_frames),(10,60),
+					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
+				cv2.putText(frame, "blinks_in_sec: {}".format(blinks_in_sec), (300, 30),
+					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)		
 
-				cv2.destroyAllWindows()
+				# write to frame
+ 			if writer is None:
+		 		(h, w) = frame.shape[:2]
+				writer = cv2.VideoWriter(args["output"], fourcc, args["fps"],
+				(w , h), True)
+				zeros = np.zeros((h, w), dtype="uint8")	
+				# show the frame
+				# cv2.imshow("Frame", frame)
+				#write it to a video file
+			writer.write(frame)
+			key = cv2.waitKey(1) & 0xFF
+
+				# if the `q` key was pressed, break from the loop
+			if key == ord("q"):
+				break
 
 		else:
 			break
+	# do a bit of cleanup
+	writer.release()
+	cv2.destroyAllWindows()
+	vs.stop()		
 
 except Exception as e:
 	raise e
@@ -166,5 +215,6 @@ finally:
 	with open('eye_blinks1.csv', 'wb') as csvFile:
 		writer = csv.writer(csvFile)
 		writer.writerows(csvData) 
+
 
 
