@@ -103,7 +103,7 @@ try:
 			gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 			frame_counter += 1
 			frames_in_sec += 1
-			if frames_in_sec == int(fps):
+			if (frames_in_sec - 1) == int(fps):
 				total_sec += 1
 				current_sec = 1
 				frames_in_sec = 1
@@ -172,11 +172,13 @@ try:
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 				cv2.putText(frame, "frames_in_sec: {}".format(frames_in_sec),(10,60),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
-				cv2.putText(frame, "detected_frames: {}".format(detected_frames), (300, 30),
-					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-				cv2.putText(frame, "total_detected: {}".format(total_detected_frames),(300,60),
+				cv2.putText(frame, "TOTAL: {}".format(TOTAL),(10,90),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
-				cv2.putText(frame, "blinks_in_sec: {}".format(blinks_in_sec), (10, 90),
+				cv2.putText(frame, "det_f: {}".format(detected_frames), (300, 30),
+					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+				cv2.putText(frame, "t_d: {}".format(total_detected_frames),(300,60),
+					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
+				cv2.putText(frame, "b/s: {}".format(blinks_in_sec), (300, 90),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)		
 
 				# write to frame

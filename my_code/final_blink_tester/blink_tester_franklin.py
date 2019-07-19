@@ -90,7 +90,7 @@ try:
 			gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 			frame_counter += 1
 			frames_in_sec += 1
-			if frames_in_sec == int(fps):
+			if (frames_in_sec -1) == int(fps):
 				total_sec += 1
 				current_sec = 1
 				frames_in_sec = 1
