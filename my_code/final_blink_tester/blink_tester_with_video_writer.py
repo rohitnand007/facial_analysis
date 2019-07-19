@@ -59,6 +59,7 @@ TOTAL = 0
 frame_counter = 0
 frames_in_sec, detected_frames , total_sec, blinks_in_sec, current_sec = 0,0,0,0,0
 total_detected_frames = 0
+cal_actual_sec = 0
 
 
 #initialize the container for CSV file
@@ -102,6 +103,7 @@ try:
 			#frame = imutils.rotate_bound(frame, 90)
 			gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 			frame_counter += 1
+			cal_actual_sec = int(frame_counter/fps)
 			frames_in_sec += 1
 			if (frames_in_sec - 1) == int(fps):
 				total_sec += 1
@@ -157,12 +159,12 @@ try:
 					COUNTER = 0
 
 				if current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec):
-					csvData.append([total_sec,blinks_in_sec])
+					csvData.append([cal_actual_sec,blinks_in_sec])
 					blinks_in_sec = 0
 					current_sec = 0	
 					detected_frames = 1
 				elif current_sec ==1 and detected_frames < int(0.6 * frames_in_sec):
-					csvData.append([total_sec, -1])
+					csvData.append([cal_actual_sec, -1])
 					blinks_in_sec = 0
 					current_sec = 0	
 					detected_frames = 1					
@@ -210,7 +212,7 @@ else:
 	pass
 finally:
 	csvData.append(["total_sec","total_blinks", "total_frames"])
-	csvData.append([total_sec,TOTAL, frame_counter])
+	csvData.append([cal_actual_sec,TOTAL, frame_counter])
 
 	with open('eye_blinks1.csv', 'wb') as csvFile:
 		writer = csv.writer(csvFile)
