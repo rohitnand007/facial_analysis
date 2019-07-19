@@ -103,7 +103,6 @@ try:
 			#frame = imutils.rotate_bound(frame, 90)
 			gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 			frame_counter += 1
-			cal_actual_sec = int(frame_counter/fps)
 			frames_in_sec += 1
 			if (frames_in_sec - 1) == int(fps):
 				total_sec += 1
@@ -159,11 +158,13 @@ try:
 					COUNTER = 0
 
 				if current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec):
+					cal_actual_sec = int(frame_counter/fps)
 					csvData.append([cal_actual_sec,blinks_in_sec])
 					blinks_in_sec = 0
 					current_sec = 0	
 					detected_frames = 1
 				elif current_sec ==1 and detected_frames < int(0.6 * frames_in_sec):
+					cal_actual_sec = int(frame_counter/fps)
 					csvData.append([cal_actual_sec, -1])
 					blinks_in_sec = 0
 					current_sec = 0	
