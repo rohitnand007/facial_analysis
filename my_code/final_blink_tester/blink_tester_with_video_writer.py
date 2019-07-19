@@ -209,8 +209,8 @@ except Exception as e:
 else:
 	pass
 finally:
-	csvData.append(["total_sec","total_blinks"])
-	csvData.append([total_sec,TOTAL])
+	csvData.append(["total_sec","total_blinks", "total_frames"])
+	csvData.append([total_sec,TOTAL, frame_counter])
 
 	with open('eye_blinks1.csv', 'wb') as csvFile:
 		writer = csv.writer(csvFile)
