@@ -187,7 +187,7 @@ try:
 				# write to frame
  			if writer is None:
 		 		(h, w) = frame.shape[:2]
-				writer = cv2.VideoWriter(args["output"], fourcc, args["fps"],
+				writer = cv2.VideoWriter(args["output"], fourcc, fps,
 				(w , h), True)
 				zeros = np.zeros((h, w), dtype="uint8")	
 				# show the frame
