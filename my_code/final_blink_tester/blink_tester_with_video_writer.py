@@ -107,7 +107,7 @@ try:
 			if (frames_in_sec - 1) == int(fps):
 				total_sec += 1
 				current_sec = 1
-				frames_in_sec = 1
+				# frames_in_sec = 1
 			#frame = imutils.rotate_bound(frame, 90)
 			# img_name = "junk_images/opencv_frame_{}.png".format(total_frame_counter)
   			#cv2.imwrite(img_name, frame)
@@ -178,13 +178,15 @@ try:
 				csvData.append([cal_actual_sec,blinks_in_sec])
 				blinks_in_sec = 0
 				current_sec = 0	
-				detected_frames = 1
+				detected_frames = 0
+				frames_in_sec = 1
 			elif (current_sec == 1 and detected_frames < int(0.9 * frames_in_sec)):
 				cal_actual_sec = int(frame_counter/fps)
 				csvData.append([cal_actual_sec, -1])
 				blinks_in_sec = 0
 				current_sec = 0	
-				detected_frames = 1					
+				detected_frames = 0	
+				frames_in_sec = 1			
 
 				# write to frame
  			if writer is None:
