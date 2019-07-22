@@ -173,14 +173,14 @@ try:
 				cv2.putText(frame, "b/s: {}".format(blinks_in_sec), (300, 90),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-			if (current_sec == 1 and detected_frames >= int(0.9 * frames_in_sec)):
+			if (current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec)):
 				cal_actual_sec = int(frame_counter/fps)
 				csvData.append([cal_actual_sec,blinks_in_sec])
 				blinks_in_sec = 0
 				current_sec = 0	
 				detected_frames = 0
 				frames_in_sec = 1
-			elif (current_sec == 1 and detected_frames < int(0.9 * frames_in_sec)):
+			elif (current_sec == 1 and detected_frames < int(0.6 * frames_in_sec)):
 				cal_actual_sec = int(frame_counter/fps)
 				csvData.append([cal_actual_sec, -1])
 				blinks_in_sec = 0
