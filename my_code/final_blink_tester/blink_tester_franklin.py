@@ -103,14 +103,15 @@ try:
 			# img_name = "junk_images/opencv_frame_{}.png".format(total_frame_counter)
   			#cv2.imwrite(img_name, frame)
 			# detect faces in the grayscale frame
-			rects = detector(gray, 0)  	
+			rects = detector(gray, 0)  
+			if len(rects) >= 1:
+				detected_frames += 1
+				total_detected_frames += 1
 			# loop over the face detections
 			for rect in rects:
 				# determine the facial landmarks for the face region, then
 				# convert the facial landmark (x, y)-coordinates to a NumPy
 				# array
-				detected_frames += 1
-				total_detected_frames += 1
 				shape = predictor(gray, rect)
 				shape = face_utils.shape_to_np(shape)
 
@@ -161,13 +162,13 @@ try:
 				cv2.putText(frame, "b/s: {}".format(blinks_in_sec), (300, 90),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-			if current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec):
+			if current_sec == 1 and detected_frames >= int(0.9 * frames_in_sec):
 				cal_actual_sec = int(frame_counter/fps)
 				csvData.append([cal_actual_sec,blinks_in_sec])
 				blinks_in_sec = 0
 				current_sec = 0	
 				detected_frames = 1
-			elif current_sec ==1 and detected_frames < int(0.6 * frames_in_sec):
+			elif current_sec ==1 and detected_frames < int(0.9 * frames_in_sec):
 				cal_actual_sec = int(frame_counter/fps)
 				csvData.append([cal_actual_sec, -1])
 				blinks_in_sec = 0
@@ -183,8 +184,8 @@ except Exception as e:
 else:
 	pass
 finally:
-	csvData.append(["total_sec","total_blinks", "total_frames"])
-	csvData.append([cal_actual_sec,TOTAL, frame_counter])
+	csvData.append(["total_sec","total_blinks", "total_frames", "total_detected_frames"])
+	csvData.append([cal_actual_sec,TOTAL, frame_counter, total_detected_frames])
 	file_name = "output_csv/" + args["video"].split("/")[-1].split(".")[0] + ".csv"
 
 	with open(file_name, 'wb') as csvFile:
