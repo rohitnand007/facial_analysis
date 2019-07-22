@@ -114,14 +114,13 @@ try:
   			#cv2.imwrite(img_name, frame)
 			# detect faces in the grayscale frame
 			rects = detector(gray, 0)  	
-			if len(rects) > 0:
-				detected_frames += 1
-				total_detected_frames += 1
 			# loop over the face detections
 			for rect in rects:
 				# determine the facial landmarks for the face region, then
 				# convert the facial landmark (x, y)-coordinates to a NumPy
 				# array
+				detected_frames += 1
+				total_detected_frames += 1
 				shape = predictor(gray, rect)
 				shape = face_utils.shape_to_np(shape)
 
@@ -156,19 +155,7 @@ try:
 						blinks_in_sec += 1						
 					# reset the eye frame counter
 					COUNTER = 0
-
-				if current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec):
-					cal_actual_sec = int(frame_counter/fps)
-					csvData.append([cal_actual_sec,blinks_in_sec])
-					blinks_in_sec = 0
-					current_sec = 0	
-					detected_frames = 1
-				elif current_sec ==1 and detected_frames < int(0.6 * frames_in_sec):
-					cal_actual_sec = int(frame_counter/fps)
-					csvData.append([cal_actual_sec, -1])
-					blinks_in_sec = 0
-					current_sec = 0	
-					detected_frames = 1					
+				
 				# draw the total number of blinks on the frame along with
 				# the computed eye aspect ratio for the frame
 				cv2.putText(frame, "total_sec: {}".format(total_sec), (10, 30),
@@ -182,7 +169,20 @@ try:
 				cv2.putText(frame, "t_d: {}".format(total_detected_frames),(300,60),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2)
 				cv2.putText(frame, "b/s: {}".format(blinks_in_sec), (300, 90),
-					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)		
+					cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
+			if current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec):
+				cal_actual_sec = int(frame_counter/fps)
+				csvData.append([cal_actual_sec,blinks_in_sec])
+				blinks_in_sec = 0
+				current_sec = 0	
+				detected_frames = 1
+			elif current_sec ==1 and detected_frames < int(0.6 * frames_in_sec):
+				cal_actual_sec = int(frame_counter/fps)
+				csvData.append([cal_actual_sec, -1])
+				blinks_in_sec = 0
+				current_sec = 0	
+				detected_frames = 1					
 
 				# write to frame
  			if writer is None:
@@ -214,8 +214,9 @@ else:
 finally:
 	csvData.append(["total_sec","total_blinks", "total_frames"])
 	csvData.append([cal_actual_sec,TOTAL, frame_counter])
+	file_name = args["video"].split("/")[-1].split(".")[0] + ".csv"
 
-	with open('eye_blinks1.csv', 'wb') as csvFile:
+	with open(file_name, 'wb') as csvFile:
 		writer = csv.writer(csvFile)
 		writer.writerows(csvData) 
 
