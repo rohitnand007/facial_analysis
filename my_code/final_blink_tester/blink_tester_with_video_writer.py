@@ -214,7 +214,7 @@ else:
 finally:
 	csvData.append(["total_sec","total_blinks", "total_frames"])
 	csvData.append([cal_actual_sec,TOTAL, frame_counter])
-	file_name = "/output_csv/" + args["video"].split("/")[-1].split(".")[0] + ".csv"
+	file_name = "output_csv/" + args["video"].split("/")[-1].split(".")[0] + ".csv"
 
 	with open(file_name, 'wb') as csvFile:
 		writer = csv.writer(csvFile)
