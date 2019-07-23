@@ -117,59 +117,60 @@ for video in videos:
 				# img_name = "junk_images/opencv_frame_{}.png".format(total_frame_counter)
 	  			#cv2.imwrite(img_name, frame)
 				# detect faces in the grayscale frame
-				rects = detector(gray, 0)  	
+				rects = detector(gray, 0)  
+				print(len(rects))	
 				if len(rects) >= 1:
 					detected_frames += 1
 					total_detected_frames += 1
 					print("incremented.........................................")
 					print(detected_frames)
-				# loop over the face detections
-				for rect in rects:
-					# determine the facial landmarks for the face region, then
-					# convert the facial landmark (x, y)-coordinates to a NumPy
-					# array
-					shape = predictor(gray, rect)
-					shape = face_utils.shape_to_np(shape)
+				# # loop over the face detections
+				# for rect in rects:
+				# 	# determine the facial landmarks for the face region, then
+				# 	# convert the facial landmark (x, y)-coordinates to a NumPy
+				# 	# array
+				# 	shape = predictor(gray, rect)
+				# 	shape = face_utils.shape_to_np(shape)
 
-					# extract the left and right eye coordinates, then use the
-					# coordinates to compute the eye aspect ratio for both eyes
-					leftEye = shape[lStart:lEnd]
-					rightEye = shape[rStart:rEnd]
-					leftEAR = eye_aspect_ratio(leftEye)
-					rightEAR = eye_aspect_ratio(rightEye)
+				# 	# extract the left and right eye coordinates, then use the
+				# 	# coordinates to compute the eye aspect ratio for both eyes
+				# 	leftEye = shape[lStart:lEnd]
+				# 	rightEye = shape[rStart:rEnd]
+				# 	leftEAR = eye_aspect_ratio(leftEye)
+				# 	rightEAR = eye_aspect_ratio(rightEye)
 
-					# average the eye aspect ratio together for both eyes
-					ear = (leftEAR + rightEAR) / 2.0	
+				# 	# average the eye aspect ratio together for both eyes
+				# 	ear = (leftEAR + rightEAR) / 2.0	
 
-					# check to see if the eye aspect ratio is below the blink
-					# threshold, and if so, increment the blink frame counter
-					if ear < EYE_AR_THRESH:
-						COUNTER += 1
-					# otherwise, the eye aspect ratio is not below the blink
-					# threshold
-					else:
-						# if the eyes were closed for a sufficient number of
-						# then increment the total number of blinks
-						if COUNTER >= EYE_AR_CONSEC_FRAMES:
-							TOTAL += 1
-							blinks_in_sec += 1						
-						# reset the eye frame counter
-						COUNTER = 0
+				# 	# check to see if the eye aspect ratio is below the blink
+				# 	# threshold, and if so, increment the blink frame counter
+				# 	if ear < EYE_AR_THRESH:
+				# 		COUNTER += 1
+				# 	# otherwise, the eye aspect ratio is not below the blink
+				# 	# threshold
+				# 	else:
+				# 		# if the eyes were closed for a sufficient number of
+				# 		# then increment the total number of blinks
+				# 		if COUNTER >= EYE_AR_CONSEC_FRAMES:
+				# 			TOTAL += 1
+				# 			blinks_in_sec += 1						
+				# 		# reset the eye frame counter
+				# 		COUNTER = 0
 					
-				if (current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec)):
-					cal_actual_sec = int(frame_counter/fps)
-					csvData.append([cal_actual_sec,blinks_in_sec])
-					blinks_in_sec = 0
-					current_sec = 0	
-					detected_frames = 0
-					frames_in_sec = 1
-				elif (current_sec == 1 and detected_frames < int(0.6 * frames_in_sec)):
-					cal_actual_sec = int(frame_counter/fps)
-					csvData.append([cal_actual_sec, -1])
-					blinks_in_sec = 0
-					current_sec = 0	
-					detected_frames = 0	
-					frames_in_sec = 1			
+				# if (current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec)):
+				# 	cal_actual_sec = int(frame_counter/fps)
+				# 	csvData.append([cal_actual_sec,blinks_in_sec])
+				# 	blinks_in_sec = 0
+				# 	current_sec = 0	
+				# 	detected_frames = 0
+				# 	frames_in_sec = 1
+				# elif (current_sec == 1 and detected_frames < int(0.6 * frames_in_sec)):
+				# 	cal_actual_sec = int(frame_counter/fps)
+				# 	csvData.append([cal_actual_sec, -1])
+				# 	blinks_in_sec = 0
+				# 	current_sec = 0	
+				# 	detected_frames = 0	
+				# 	frames_in_sec = 1			
 
 			else:
 				break
