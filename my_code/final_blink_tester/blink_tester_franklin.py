@@ -117,13 +117,16 @@ for video in videos:
 				# img_name = "junk_images/opencv_frame_{}.png".format(total_frame_counter)
 	  			#cv2.imwrite(img_name, frame)
 				# detect faces in the grayscale frame
-				rects = detector(gray, 0)  
-				print(len(rects))	
-				if len(rects) >= 1:
-					detected_frames += 1
-					total_detected_frames += 1
-					print("incremented.........................................")
-					print(detected_frames)
+				try:
+					rects = detector(gray, 0)  
+					print(len(rects))
+				except:
+					pass		
+				# if len(rects) >= 1:
+				# 	detected_frames += 1
+				# 	total_detected_frames += 1
+				# 	print("incremented.........................................")
+				# 	print(detected_frames)
 				# # loop over the face detections
 				# for rect in rects:
 				# 	# determine the facial landmarks for the face region, then
