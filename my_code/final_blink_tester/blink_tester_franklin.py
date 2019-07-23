@@ -37,12 +37,6 @@ def eye_aspect_ratio(eye):
 ap = argparse.ArgumentParser()
 ap.add_argument("-p", "--shape-predictor", required=True,
 	help="path to facial landmark predictor")
-ap.add_argument("-o", "--output", type = str, default = "outputy.avi",
-	help="path to output video file")
-ap.add_argument("-f", "--fps", type=int, default=30,
-	help="FPS of output video")
-ap.add_argument("-c", "--codec", type=str, default="MJPG",
-	help="codec of output video")
 ap.add_argument("-v", "--video", default=None,
     help="path to input video ")
 ap.add_argument("-d", "--folder", 
@@ -180,7 +174,6 @@ for video in videos:
 			else:
 				break
 		# do a bit of cleanup
-		writer.release()
 		cv2.destroyAllWindows()
 		# vs.stop()		
 
