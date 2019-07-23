@@ -178,6 +178,7 @@ for video in videos:
 		# vs.stop()		
 
 	except Exception as e:
+		pass
 		raise e
 	else:
 		pass
