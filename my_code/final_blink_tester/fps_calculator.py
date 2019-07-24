@@ -10,6 +10,7 @@ import cv2
 
 
 def fps_calculator(video):
+	video = cv2.VideoCapture(video)
 	fps = video.get(cv2.CAP_PROP_FPS)
 	override = False
 	if fps > 100:
