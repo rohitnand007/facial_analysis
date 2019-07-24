@@ -115,7 +115,7 @@ for video in videos:
 				# it, and convert it to grayscale channels)
 
 				frame = imutils.resize(frame, width=450)
-				frame = imutils.rotate_bound(frame, 270)
+				# frame = imutils.rotate_bound(frame, 27)
 				gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 				frame_counter += 1
 				frames_in_sec += 1
