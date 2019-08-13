@@ -109,7 +109,7 @@ finally:
 
 #csvfile for mapping and undetected data
     csvData2 = []
-    csvData2.append(["row","corresponding_image_filename"])
+    csvData2.append(["detected_row_number","corresponding_image_filename"])
     file_name2 = video_title_path+"/"+ video.split("/")[-1].split(".")[0] + "_mapping_and_undetected.csv"
 
     for (i,img_num) in enumerate(detected_counter, start=2):
@@ -118,6 +118,9 @@ finally:
     csvData2.append(["serial_no","undetected_image_filename"])
     for (i,undetected) in enumerate(undetected_counter, start=1):
         csvData2.append([i, str(undetected)+".jpg"])
+
+    csvData2.append(["Total Detected Frames","Total undetected Frames"]) 
+    csvData2.append([len(detected_counter),len(undetected_counter)])   
 
     with open(file_name2, 'wb') as csvFile:
         writer = csv.writer(csvFile)
