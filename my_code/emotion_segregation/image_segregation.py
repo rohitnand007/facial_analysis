@@ -8,6 +8,7 @@ from scipy.spatial import distance as dist
 from sklearn.cluster import MeanShift
 import math 
 from imutils import face_utils
+from imutils.face_utils import FaceAligner
 import numpy as np
 import argparse
 import imutils
@@ -34,6 +35,7 @@ undetected_counter = []
 print("[INFO] loading facial landmark predictor...")
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+fa = FaceAligner(predictor, desiredFaceWidth=256)
 
 print(detector)
 
@@ -72,18 +74,24 @@ try:
                 # convert the facial landmark (x, y)-coordinates to a NumPy
                 # array
                     print("+++++++++++++++++++++++++++>{}".format(COUNTER))
-                    shape = predictor(gray, rect)
+                    # shape = predictor(gray, rect)
+                    # shape = face_utils.shape_to_np(shape)
+                    faceAligned = fa.align(frame, gray, rect)
+                    gray1 = cv2.cvtColor(faceAligned, cv2.COLOR_BGR2GRAY)
+                    rects1 = detector(gray1,0)[0]
+                    shape = predictor(gray1,rects1)
                     shape = face_utils.shape_to_np(shape)
+
                     data = get_dist_angle(shape)
                     img_vector_data['vectorised_data'].append(data) 
                     detected_counter.append(COUNTER)
-                    (x, y, w, h) = face_utils.rect_to_bb(rect)
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)      
+                    (x, y, w, h) = face_utils.rect_to_bb(rects1)
+                    cv2.rectangle(faceAligned, (x, y), (x + w, y + h), (0, 255, 0), 2)      
             else: 
                 undetected_counter.append(COUNTER)
             # loop over the face detections
                 #img_vector_data['vectorised_data'].append([-1])
-            cv2.imshow("Frame", frame)
+            cv2.imshow("Frame", faceAligned)
             key = cv2.waitKey(1) & 0xFF   
         else:
             break
@@ -113,6 +121,7 @@ except Exception as e:
 else:
     pass
 finally:
+    pass
     # ms = MeanShift(cluster_all=False)
     # ms.fit(img_vector_data['vectorised_data'])
     # labels = ms.labels_

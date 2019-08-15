@@ -8,6 +8,7 @@ from scipy.spatial import distance as dist
 from sklearn.cluster import MeanShift
 import math 
 from imutils import face_utils
+from imutils.face_utils import FaceAligner
 import numpy as np
 import argparse
 import imutils
@@ -36,6 +37,7 @@ undetected_counter = []
 print("[INFO] loading facial landmark predictor...")
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(args['shape_predictor'])
+fa = FaceAligner(predictor, desiredFaceWidth=256)
 
 print(detector)
 
@@ -63,8 +65,7 @@ try:
             #increase the frame counter by 1
             COUNTER += 1
 
-            # frame = imutils.rotate_bound(frame, 270)
-            cv2.imwrite(ini_img_path + "/" + str(COUNTER) + '.jpg', frame)
+            frame = imutils.rotate_bound(frame, 270)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # detect faces in the grayscale frame
             rects = detector(gray, 0)  
@@ -75,12 +76,18 @@ try:
                 # array
                     print("+++++++++++++++++++++++++++>{}".format(COUNTER))
                     shape = predictor(gray, rect)
+                    faceAligned = fa.align(frame, gray, rect)
+                    cv2.imwrite(ini_img_path + "/detected_images/" + str(COUNTER) + '.jpg', faceAligned)
+                    grayAlined = cv2.cvtColor(faceAligned, cv2.COLOR_BGR2GRAY)
+                    rectAlined = detector(grayAlined,0)[0]
+                    shape = predictor(grayAlined,rectAlined)
                     shape = face_utils.shape_to_np(shape)
                     data = get_dist_angle(shape)
                     img_vector_data['vectorised_data'].append(data) 
                     detected_counter.append(COUNTER)      
             else: 
                 undetected_counter.append(COUNTER) 
+                cv2.imwrite(ini_img_path + "/undetected_images/" + str(COUNTER) + '.jpg', frame)
                 print("undetected********************************************")
         else:
             break

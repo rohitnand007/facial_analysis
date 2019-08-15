@@ -22,7 +22,8 @@ def get_dist_angle(shape):
 def create_parent_dir(video_title_path):
     video_title_path = video_title_path
     if not os.path.exists(video_title_path):
-        os.makedirs(video_title_path + '/img_temp') 
+        os.makedirs(video_title_path + '/img_temp' + '/detected_images') 
+        os.makedirs(video_title_path + '/img_temp' + '/undetected_images') 
     return video_title_path + '/img_temp/'   
 
 def create_child_dirs(dirs_array, parent_dir):
