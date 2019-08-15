@@ -68,7 +68,7 @@ try:
             # frame = imutils.rotate_bound(frame, 270)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # detect faces in the grayscale frame
-            rects = detector(gray, 0)  
+            rects = detector(gray, 2)  
             if len(rects) > 0:
                 for (i,rect) in enumerate(rects):
                 # determine the facial landmarks for the face region, then
@@ -79,7 +79,7 @@ try:
                     faceAligned = fa.align(frame, gray, rect)
                     cv2.imwrite(ini_img_path + "/detected_images/" + str(COUNTER) + '.jpg', faceAligned)
                     grayAlined = cv2.cvtColor(faceAligned, cv2.COLOR_BGR2GRAY)
-                    rectAlined = detector(grayAlined,0)[0]
+                    rectAlined = detector(grayAlined,2)[0]
                     shape = predictor(grayAlined,rectAlined)
                     shape = face_utils.shape_to_np(shape)
                     data = get_dist_angle(shape)
