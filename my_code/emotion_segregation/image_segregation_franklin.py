@@ -140,8 +140,8 @@ finally:
     for (i,undetected) in enumerate(undetected_counter, start=1):
         csvData2.append([i, str(undetected)+".jpg"])
 
-    csvData2.append(["Total Detected Frames","Total undetected Frames", "Total_alined_undetected"]) 
-    csvData2.append([len(detected_counter),len(undetected_counter), len(alined_undetected_counter)])   
+    csvData2.append(["Total frames in video","Total Detected Frames","Total undetected Frames", "Total_alined_undetected"]) 
+    csvData2.append([len(COUNTER),len(detected_counter),len(undetected_counter), len(alined_undetected_counter)])   
 
     with open(file_name2, 'wb') as csvFile:
         writer = csv.writer(csvFile)
