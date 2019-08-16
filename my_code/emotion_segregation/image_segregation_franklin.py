@@ -30,7 +30,8 @@ img_vector_data = {'vectorised_data':[]}
 
 COUNTER = 0  
 detected_counter = []
-undetected_counter = []           
+undetected_counter = [] 
+alined_undetected_counter = []          
  
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
@@ -68,7 +69,7 @@ try:
             # frame = imutils.rotate_bound(frame, 270)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # detect faces in the grayscale frame
-            rects = detector(gray, 2)  
+            rects = detector(gray, 0)  
             if len(rects) > 0:
                 for (i,rect) in enumerate(rects):
                 # determine the facial landmarks for the face region, then
@@ -77,18 +78,31 @@ try:
                     print("+++++++++++++++++++++++++++>{}".format(COUNTER))
                     shape = predictor(gray, rect)
                     faceAligned = fa.align(frame, gray, rect)
-                    cv2.imwrite(ini_img_path + "/detected_images/" + str(COUNTER) + '.jpg', faceAligned)
                     grayAlined = cv2.cvtColor(faceAligned, cv2.COLOR_BGR2GRAY)
-                    rectAlined = detector(grayAlined,2)[0]
-                    shape = predictor(grayAlined,rectAlined)
-                    shape = face_utils.shape_to_np(shape)
-                    data = get_dist_angle(shape)
-                    img_vector_data['vectorised_data'].append(data) 
-                    detected_counter.append(COUNTER)      
+                    alinedRect = detector(grayAlined,0)
+                    if len(alinedRect) > 0:
+                        cv2.imwrite(ini_img_path + "/detected_images/" + str(COUNTER) + '.jpg', faceAligned)
+                        rectAlined = alinedRect[0]
+                        shape = predictor(grayAlined,rectAlined)
+                        shape = face_utils.shape_to_np(shape)
+                        data = get_dist_angle(shape)
+                        img_vector_data['vectorised_data'].append(data) 
+                        detected_counter.append(COUNTER) 
+                        # (x, y, w, h) = face_utils.rect_to_bb(rectAlined)
+                        # cv2.rectangle(faceAligned, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    else:
+                        alined_undetected_counter.append(COUNTER) 
+                        cv2.imwrite(ini_img_path + "/alined_undetected_images/" + str(COUNTER) + '.jpg', faceAligned)
+                        print("alined_undetected********************************************")
+                          
             else: 
                 undetected_counter.append(COUNTER) 
                 cv2.imwrite(ini_img_path + "/undetected_images/" + str(COUNTER) + '.jpg', frame)
                 print("undetected********************************************")
+
+        
+            # cv2.imshow("Frame", faceAligned)
+            # key = cv2.waitKey(1) & 0xFF         
         else:
             break
     # do a bit of cleanup
@@ -126,8 +140,8 @@ finally:
     for (i,undetected) in enumerate(undetected_counter, start=1):
         csvData2.append([i, str(undetected)+".jpg"])
 
-    csvData2.append(["Total Detected Frames","Total undetected Frames"]) 
-    csvData2.append([len(detected_counter),len(undetected_counter)])   
+    csvData2.append(["Total Detected Frames","Total undetected Frames", "Total_alined_undetected"]) 
+    csvData2.append([len(detected_counter),len(undetected_counter), len(alined_undetected_counter)])   
 
     with open(file_name2, 'wb') as csvFile:
         writer = csv.writer(csvFile)
