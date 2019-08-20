@@ -29,6 +29,7 @@ args = vars(ap.parse_args())
 img_vector_data = {'vectorised_data':[]}
 
 COUNTER = 0  
+measure_1 = -1
 detected_counter = []
 undetected_counter = [] 
 alined_undetected_counter = []          
@@ -76,7 +77,7 @@ try:
                 # convert the facial landmark (x, y)-coordinates to a NumPy
                 # array
                     print("+++++++++++++++++++++++++++>{}".format(COUNTER))
-                    shape = predictor(gray, rect)
+                    # shape = predictor(gray, rect)
                     faceAligned = fa.align(frame, gray, rect)
                     grayAlined = cv2.cvtColor(faceAligned, cv2.COLOR_BGR2GRAY)
                     alinedRect = detector(grayAlined,0)
@@ -85,7 +86,9 @@ try:
                         rectAlined = alinedRect[0]
                         shape = predictor(grayAlined,rectAlined)
                         shape = face_utils.shape_to_np(shape)
-                        data = get_dist_angle(shape)
+                        if measure_1 < 0:
+                            measure_1 = get_measure(shape)
+                        data = get_dist_angle(shape, measure_1)
                         img_vector_data['vectorised_data'].append(data) 
                         detected_counter.append(COUNTER) 
                         # (x, y, w, h) = face_utils.rect_to_bb(rectAlined)

@@ -4,14 +4,21 @@ import math
 from scipy.spatial import distance as dist
 import numpy as np
 
-def get_dist_angle(shape):
+def get_measure(shape):
+    m = dist.euclidean(shape[27],shape[28]) + dist.euclidean(shape[28],shape[29])
+    return m
+
+def get_dist_angle(shape, measure_1):
     distance = 0
     angle = 0
     data_array = []
+    measure_n = get_measure(shape)
+    scale = measure_1 / measure_n
+    print("scaler value............................{}".format(scale))
     (xmean, ymean) = np.mean(shape[:,0]), np.mean(shape[:,1])
     for point in shape:
         (x,y) = point[0],point[1]
-        distance = dist.euclidean((xmean,ymean), (x,y))
+        distance = dist.euclidean((xmean,ymean), (x,y)) * scale
         xcentral, ycentral = (x-xmean),(y-ymean) 
         angle = (math.atan2(ycentral, xcentral)*360)/(2*math.pi)
         data_array.append([distance,angle])
