@@ -141,7 +141,7 @@ finally:
         csvData2.append([i, str(undetected)+".jpg"])
 
     csvData2.append(["Total frames in video","Total Detected Frames","Total undetected Frames", "Total_alined_undetected"]) 
-    csvData2.append([len(COUNTER),len(detected_counter),len(undetected_counter), len(alined_undetected_counter)])   
+    csvData2.append([COUNTER,len(detected_counter),len(undetected_counter), len(alined_undetected_counter)])   
 
     with open(file_name2, 'wb') as csvFile:
         writer = csv.writer(csvFile)
