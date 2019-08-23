@@ -29,8 +29,8 @@ def get_dist_angle(shape, measure_x, measure_y):
     measure_nx = get_measure_x(shape)
     measure_ny = get_measure_y(shape)
 
-    scale_x = measure_x / measure_nx
-    scale_y = measure_y / measure_ny
+    scale_x = measure_nx / measure_x
+    scale_y = measure_ny / measure_y
     print("scaler value............................{},{}".format(scale_x,scale_y))
     (xmean, ymean) = np.mean(shape[:,0]), np.mean(shape[:,1])
     for point in shape:
