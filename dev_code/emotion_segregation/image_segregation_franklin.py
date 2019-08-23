@@ -29,7 +29,9 @@ args = vars(ap.parse_args())
 img_vector_data = {'vectorised_data':[]}
 
 COUNTER = 0  
-measure_1 = -1
+# measure_1 is for calulating scaling values of frame 1 and storing it
+measure_x = -1
+measure_y = -1
 detected_counter = []
 undetected_counter = [] 
 alined_undetected_counter = []          
@@ -86,9 +88,10 @@ try:
                         rectAlined = alinedRect[0]
                         shape = predictor(grayAlined,rectAlined)
                         shape = face_utils.shape_to_np(shape)
-                        if measure_1 < 0:
-                            measure_1 = get_measure(shape)
-                        data = get_dist_angle(shape, measure_1)
+                        if measure_x < 0 and measure_y < 0:
+                            measure_x = get_measure_x(shape)
+                            measure_y = get_measure_y(shape)
+                        data = get_dist_angle(shape, measure_x, measure_y)
                         img_vector_data['vectorised_data'].append(data) 
                         detected_counter.append(COUNTER) 
                         # (x, y, w, h) = face_utils.rect_to_bb(rectAlined)
