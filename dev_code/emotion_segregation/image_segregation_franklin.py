@@ -48,7 +48,7 @@ print(detector)
 # start the video stream thread
 print("[INFO] starting video stream thread...")
 video = args["video"]
-video_title_path = os.path.expanduser("~") "/../../../export/research/analysis/human/kkiehl/media/img_data_folder" + "/" +  video.split("/")[-1].split(".")[0]
+video_title_path = os.path.expanduser("~") + "/../../../export/research/analysis/human/kkiehl/media/img_data_folder" + "/" +  video.split("/")[-1].split(".")[0]
 # video_title_path = os.getcwd() + "/data_folder" + "/" +  video.split("/")[-1].split(".")[0]
 vs = cv2.VideoCapture(video) 
 
