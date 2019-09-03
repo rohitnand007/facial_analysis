@@ -99,7 +99,7 @@ try:
                         # cv2.rectangle(faceAligned, (x, y), (x + w, y + h), (0, 255, 0), 2)
                     else:
                         alined_undetected_counter.append(COUNTER) 
-                        cv2.imwrite(ini_img_path + "/alined_undetected_images/" + str(COUNTER) + '.jpg', faceAligned)
+                        cv2.imwrite(ini_img_path + "/aligned_undetected_images/" + str(COUNTER) + '.jpg', faceAligned)
                         print("alined_undetected********************************************")
                           
             else: 
