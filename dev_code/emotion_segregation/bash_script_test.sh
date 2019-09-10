@@ -1,22 +1,20 @@
 # ./video_runner.sh "${ARR[@]}"
+# bash array should be in the format of array=("Rohit" "nand") and not a=["rohit","nand"]
 ARR=( "$@" )
 videos=()
+printf "Input ARR contains %d elements.\n" ${#ARR[@]}
 for i in "${ARR[@]}"
 do
 	:
-	#videos=$(find /na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/ -name "*$i**.wmv")
-	# printf "ARR array contains %d elements: " ${#videos[@]}
-	# printf ' ->%s\n' "${videos[@]}"
-	while IFS=  read -r -d $'\0'; do
-		videos+=("$REPLY")
-	done < <(find /na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/adult_06408/dropoff/ -name "$i**.wmv" -print0)
-	
-	for j in "${videos[@]}"
-	do
-	 	:
-	 	printf "this video runs here: "
-	 done
+	search_array=(`find /na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/adult_06408/ /na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/action_09542/ -name '*.wmv' -print | grep "$i"`)
+	for ele in "${search_array[@]}"; do videos+=("${ele}"); done
+		
+done
+for j in "${videos[@]}"
+do
+	:
+	 	python image_segregation_franklin.py --shape-predictor ~/file_transfer_bucket/shape_predictor_68_face_landmarks.dat --video "$j"
 done
 printf ' ->%s\n' "${videos[@]}"	
-printf "ARR array contains %d elements: " ${#videos[@]}
+printf "Final array contains %d elements...EOM\n " ${#videos[@]}
 
