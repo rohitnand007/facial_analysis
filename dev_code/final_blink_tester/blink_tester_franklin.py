@@ -33,21 +33,23 @@ def eye_aspect_ratio(eye):
 	# return the eye aspect ratio
 	return ear
 
-def collect_output_dir(path,just_video_name):
-	path = "/na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/adult_06408/adult_06408/dropoff/06408_M87163738_visit3_20091105_assessment_SCIDII_CLH1.wmv"
+def collect_output_dir(path):
+	# path = "/na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/adult_06408/adult_06408/dropoff/06408_M87163738_visit3_20091105_assessment_SCIDII_CLH1.wmv"
 	a = path.split("/")
 	a = a[13:]
 	del a[-1]
-	a.append(just_video_name)
+	# a.append(just_video_name)
 	return a
 
 def create_child_dirs(dirs_array, parent_dir):
     if os.path.exists(parent_dir):
         parent_directory = parent_dir
         for bucket in dirs_array:
-            os.mkdir(parent_directory+ str(bucket))
-            parent_directory += str(bucket) + "/"
-        print(parent_directory)    
+        	parent_directory += str(bucket)
+        	print(parent_directory)
+        	if not os.path.exists(parent_directory):
+	            os.mkdir(parent_directory)  
+    		parent_directory += "/"
         return parent_directory    
     else:
         print("No parent dir created......@@@")	
@@ -82,9 +84,10 @@ EYE_AR_CONSEC_FRAMES = 3
 for video in videos:
 	# create the output directory with same tree structure as input video path
 	just_video_name = video.split("/")[-1].split(".")[0]
-	output_result_path = os.path.expanduser("~") + "/../../../export/research/analysis/human/kkiehl/media/new_blinks_data"
-	dirs_array = collect_output_dir(output_result_path, just_video_name) 
-
+	# output_result_path = os.path.expanduser("~") + "/../../../export/research/analysis/human/kkiehl/media/new_blinks_data"
+	output_result_path = os.path.expanduser("~") + "/test_dir/"
+	dirs_array = collect_output_dir(video) 
+	out_path =  create_child_dirs(dirs_array,output_result_path)
 
 	# initialize the frame counters and the total number of blinks
 	COUNTER = 0
@@ -211,7 +214,7 @@ for video in videos:
 	finally:
 		csvData.append(["total_sec","total_blinks", "total_frames", "total_detected_frames"])
 		csvData.append([cal_actual_sec,TOTAL, frame_counter, total_detected_frames])
-		file_name = "output_csv/" + just_video_name + ".csv"
+		file_name = out_path + "/" + just_video_name + ".csv"
 
 		with open(file_name, 'wb') as csvFile:
 			writer = csv.writer(csvFile)
