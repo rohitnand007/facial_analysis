@@ -84,8 +84,8 @@ EYE_AR_CONSEC_FRAMES = 3
 for video in videos:
 	# create the output directory with same tree structure as input video path
 	just_video_name = video.split("/")[-1].split(".")[0]
-	# output_result_path = os.path.expanduser("~") + "/../../../export/research/analysis/human/kkiehl/media/new_blinks_data"
-	output_result_path = os.path.expanduser("~") + "/test_dir/"
+	output_result_path = os.path.expanduser("~") + "/../../../export/research/analysis/human/kkiehl/media/new_blinks_data/"
+	# output_result_path = os.path.expanduser("~") + "/test_dir/"
 	dirs_array = collect_output_dir(video) 
 	out_path =  create_child_dirs(dirs_array,output_result_path)
 
