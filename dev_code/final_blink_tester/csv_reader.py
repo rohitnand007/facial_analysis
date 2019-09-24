@@ -9,14 +9,14 @@ for a in list(string.letters[26:]):
 	b = a + "RR"
 	letters.append(b)
 print(letters)	
-with open('example.csv') as csvfile:
+with open('FileListForBlinkAnalysis.csv') as csvfile:
     readCSV = csv.reader(csvfile, delimiter=',')
     next(readCSV)
     for row in readCSV:
-        full_array.append(row[1])
+        full_array.append(row[3])
 while i < len(full_array):
-	sliced_array.append(full_array[i:i+2])
-	i +=2
+	sliced_array.append(full_array[i:i+10])
+	i +=10
 
 for f, b in zip(letters, sliced_array):
 	new_array = ""
