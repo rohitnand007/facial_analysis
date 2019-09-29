@@ -27,9 +27,11 @@ args = vars(ap.parse_args())
 img_vector_data = {'vectorised_data':[]}
 
 COUNTER = 0  
+measure_x = -1
+measure_y = -1
 detected_counter = []
-undetected_counter = []           
- 
+undetected_counter = [] 
+alined_undetected_counter = [] 
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
 print("[INFO] loading facial landmark predictor...")
@@ -63,8 +65,7 @@ try:
             #increase the frame counter by 1
             COUNTER += 1
 
-            #frame = imutils.rotate_bound(frame, 270)
-            cv2.imwrite(ini_img_path + "/" + str(COUNTER) + '.jpg', frame)
+            # frame = imutils.rotate_bound(frame, 270)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # detect faces in the grayscale frame
             rects = detector(gray, 0)  
@@ -75,24 +76,35 @@ try:
                 # array
                     print("+++++++++++++++++++++++++++>{}".format(COUNTER))
                     # shape = predictor(gray, rect)
-                    # shape = face_utils.shape_to_np(shape)
                     faceAligned = fa.align(frame, gray, rect)
-                    gray1 = cv2.cvtColor(faceAligned, cv2.COLOR_BGR2GRAY)
-                    rects1 = detector(gray1,0)[0]
-                    shape = predictor(gray1,rects1)
-                    shape = face_utils.shape_to_np(shape)
-
-                    data = get_dist_angle(shape)
-                    img_vector_data['vectorised_data'].append(data) 
-                    detected_counter.append(COUNTER)
-                    (x, y, w, h) = face_utils.rect_to_bb(rects1)
-                    cv2.rectangle(faceAligned, (x, y), (x + w, y + h), (0, 255, 0), 2)      
+                    grayAlined = cv2.cvtColor(faceAligned, cv2.COLOR_BGR2GRAY)
+                    alinedRect = detector(grayAlined,0)
+                    if len(alinedRect) > 0:
+                        cv2.imwrite(ini_img_path + "/detected_images/" + str(COUNTER) + '.jpg', faceAligned)
+                        rectAlined = alinedRect[0]
+                        shape = predictor(grayAlined,rectAlined)
+                        shape = face_utils.shape_to_np(shape)
+                        if measure_x < 0 and measure_y < 0:
+                            measure_x = get_measure_x(shape)
+                            measure_y = get_measure_y(shape)
+                        data = get_dist_angle(shape, measure_x, measure_y)
+                        img_vector_data['vectorised_data'].append(data) 
+                        detected_counter.append(COUNTER) 
+                        # (x, y, w, h) = face_utils.rect_to_bb(rectAlined)
+                        # cv2.rectangle(faceAligned, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    else:
+                        alined_undetected_counter.append(COUNTER) 
+                        cv2.imwrite(ini_img_path + "/aligned_undetected_images/" + str(COUNTER) + '.jpg', faceAligned)
+                        print("alined_undetected********************************************")
+                          
             else: 
-                undetected_counter.append(COUNTER)
-            # loop over the face detections
-                #img_vector_data['vectorised_data'].append([-1])
-            cv2.imshow("Frame", faceAligned)
-            key = cv2.waitKey(1) & 0xFF   
+                undetected_counter.append(COUNTER) 
+                cv2.imwrite(ini_img_path + "/undetected_images/" + str(COUNTER) + '.jpg', frame)
+                print("undetected********************************************")
+
+        
+            # cv2.imshow("Frame", faceAligned)
+            # key = cv2.waitKey(1) & 0xFF         
         else:
             break
     # do a bit of cleanup
@@ -111,9 +123,9 @@ try:
     #create each folder for each cluster
     create_child_dirs(uniq_labels, video_title_path + "/")
     #move images to respective dirs
-    for image_title in detected_counter:
-        for i,label in enumerate(labels):
-            move_file(ini_img_path,video_title_path+"/"+str(label)+"/",str(detected_counter[i])+".jpg")
+    # for image_title in detected_counter:
+    for i,label in enumerate(labels):
+        move_file(ini_img_path+ "/detected_images/",video_title_path+"/"+str(label)+"/",str(detected_counter[i])+".jpg")
 
 except Exception as e:
     pass
@@ -139,9 +151,9 @@ finally:
     # with open(file_name, 'wb') as csvFile:
     #     writer = csv.writer(csvFile)
     #     writer.writerows(csvData) 
-    print(" labels:{}".format(labels))
-    print("Number of labels calcualted:{}".format(len(labels)))
-    print("unique labels generated:{}".format(np.unique(labels)))
+    # print(" labels:{}".format(labels))
+    # print("Number of labels calcualted:{}".format(len(labels)))
+    # print("unique labels generated:{}".format(np.unique(labels)))
 
 
 
