@@ -6,7 +6,7 @@ printf "Input ARR contains %d elements.\n" ${#ARR[@]}
 for i in "${ARR[@]}"
 do
 	:
-	search_array=(`find /na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/adult_06408/ /na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/action_09542/ -name '*.wmv' -print | grep "$i"`)
+	search_array=(`find /na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/BBP_20150/Assessment_Videos/NewMexico/Adult_Incarcerated/Male -name '*.wmv' -print | grep "$i"`)
 	for ele in "${search_array[@]}"; do videos+=("${ele}"); done
 		
 done

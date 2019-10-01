@@ -12,6 +12,6 @@ def bash_array(python_array):
 	ini_string = ""
 	for title in python_array:
 		ini_string += '\"{}\" '.format(title)
-	return a.strip()
+	return ini_string.strip()
 
 		
