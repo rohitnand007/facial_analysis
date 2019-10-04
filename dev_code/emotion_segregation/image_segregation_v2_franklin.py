@@ -22,7 +22,7 @@ args = vars(ap.parse_args())
 ini_data_path = args["data_folder"]
 print ini_data_path
 
-video_file_name = ini_data_path.split('/')[-2]
+video_file_name = ini_data_path.split('/')[-1]
 
 csv_file_path = ini_data_path + "/" + video_file_name + "_detected.csv"
 
@@ -65,7 +65,7 @@ try:
     #move images to respective dirs
     # for image_title in sorted_images_array:
     for i,label in enumerate(labels):
-       move_file(detected_images_path,ini_data_path+"/"+str(label)+"/",sorted_images_array[i])
+       copy_file(detected_images_path,ini_data_path+"/"+str(label)+"/",sorted_images_array[i])
 
 except Exception as e:
     pass

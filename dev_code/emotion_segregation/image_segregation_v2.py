@@ -65,7 +65,7 @@ try:
     #move images to respective dirs
     # for image_title in sorted_images_array:
     for i,label in enumerate(labels):
-       move_file(detected_images_path,ini_data_path+"/"+str(label)+"/",sorted_images_array[i])
+       copy_file(detected_images_path,ini_data_path+"/"+str(label)+"/",sorted_images_array[i])
 
 except Exception as e:
     pass

@@ -1,5 +1,5 @@
 #inclues helper methods for image_segregation.py
-import os
+import os, shutil
 import math
 from imutils.face_utils import FACIAL_LANDMARKS_IDXS
 from scipy.spatial import distance as dist
@@ -63,6 +63,9 @@ def create_child_dirs(dirs_array, parent_dir):
 
 def move_file(parent_dir,dest_dir,file_name):
     os.rename(parent_dir+file_name, dest_dir+file_name) 
+
+def copy_file(parent_dir,dest_dir,file_name):
+    shutil.copy(parent_dir+file_name, dest_dir+file_name)
 
 def sort_img_array(imgs_path):
     tmp_array = []
