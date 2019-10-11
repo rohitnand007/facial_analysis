@@ -22,7 +22,11 @@ args = vars(ap.parse_args())
 ini_data_path = args["data_folder"]
 print ini_data_path
 
-video_file_name = ini_data_path.split('/')[-2]
+clustered_data_path = ini_data_path + "/mean_clustered_data/"
+
+if not os.path.exists(clustered_data_path): os.mkdir(clustered_data_path) 
+
+video_file_name = ini_data_path.split('/')[-1]
 
 csv_file_path = ini_data_path + "/" + video_file_name + "_detected.csv"
 
@@ -31,6 +35,8 @@ detected_images_path = ini_data_path + "/img_temp/detected_images/"
 sorted_images_array = sort_img_array(detected_images_path)
 
 print(sorted_images_array)
+
+print("Detected images are sorted successfully............................")
 
 img_vector_data = {'vectorised_data':[]}
           
@@ -50,6 +56,7 @@ try:
     # converting array to np.float type
     converted_data = np.asarray(img_vector_data['vectorised_data']) #.astype(np.float64)       
     #clustering the gathered data below
+    print("clustering the data begins here.....................................")
     ms = MeanShift(cluster_all=False)
     ms.fit(img_vector_data['vectorised_data'])
     labels = ms.labels_
@@ -60,15 +67,16 @@ try:
     print("unique cluster labels:{}".format(labels))
     print("Number of labels calcualted:{}".format(len(labels)))
     print("NUmber of unique labels calculated:{}".format(uniq_labels))
+    print("clustering the data Ends here.....................................")
     #create each folder for each cluster
-    create_child_dirs(uniq_labels, ini_data_path + "/")
+    create_child_dirs(uniq_labels, clustered_data_path + "/")
     #move images to respective dirs
     # for image_title in sorted_images_array:
     for i,label in enumerate(labels):
-       move_file(detected_images_path,ini_data_path+"/"+str(label)+"/",sorted_images_array[i])
+       copy_file(detected_images_path,clustered_data_path +"/"+str(label)+"/",sorted_images_array[i])
 
-except Exception as e:
-    pass
+# except Exception as e:
+except ZeroDivisionError:
     raise e
 else:
     pass
@@ -94,6 +102,7 @@ finally:
     # print(" labels:{}".format(labels))
     # print("Number of labels calcualted:{}".format(len(labels)))
     # print("unique labels generated:{}".format(np.unique(labels)))
+
 
 
 
