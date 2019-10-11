@@ -54,11 +54,12 @@ try:
             img_vector_data['vectorised_data'].append([float(arr) for arr in row])
         print("Data import from csv file finished")
     # converting array to np.float type
-    converted_data = np.asarray(img_vector_data['vectorised_data']) #.astype(np.float64)       
+    converted_data = np.asarray(img_vector_data['vectorised_data']) #.astype(np.float64)
+    print("image data converted to numy array..................................")       
     #clustering the gathered data below
     print("clustering the data begins here.....................................")
     ms = MeanShift(cluster_all=False)
-    ms.fit(img_vector_data['vectorised_data'])
+    ms.fit(converted_data)
     labels = ms.labels_
     cluster_centers = ms.cluster_centers_
     print(cluster_centers)
