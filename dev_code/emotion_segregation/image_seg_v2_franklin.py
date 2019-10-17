@@ -17,12 +17,15 @@ import os
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--data-folder", default=None, required=True,
     help="path to csv data and images folder")
+ap.add_argument("-v", "--clustering", default=None, required=True,
+    help="clustering algorithm to be specified")
 args = vars(ap.parse_args())
 
 ini_data_path = args["data_folder"]
+clustering_algo = args["clustering"]
 print ini_data_path
 
-clustered_data_path = ini_data_path + "/mean_clustered_data/"
+clustered_data_path = ini_data_path + "/"+ clustering_algo +"/"
 
 if not os.path.exists(clustered_data_path): os.mkdir(clustered_data_path) 
 
@@ -58,17 +61,21 @@ try:
     print("image data converted to numy array..................................")       
     #clustering the gathered data below
     print("clustering the data begins here.....................................")
-    ms = MeanShift(cluster_all=False)
-    ms.fit(converted_data)
-    labels = ms.labels_
-    cluster_centers = ms.cluster_centers_
-    print(cluster_centers)
-    uniq_labels = np.unique(labels)
-    n_clusters_ = len(np.unique(labels))
-    print("unique cluster labels:{}".format(labels))
-    print("Number of labels calcualted:{}".format(len(labels)))
-    print("NUmber of unique labels calculated:{}".format(uniq_labels))
-    print("clustering the data Ends here.....................................")
+    if clustering_algo == "meanshift":
+        ms = MeanShift(cluster_all=False)
+        ms.fit(converted_data)
+        labels = ms.labels_
+        cluster_centers = ms.cluster_centers_
+        print(cluster_centers)
+        uniq_labels = np.unique(labels)
+        n_clusters_ = len(np.unique(labels))
+        print("unique cluster labels:{}".format(labels))
+        print("Number of labels calcualted:{}".format(len(labels)))
+        print("NUmber of unique labels calculated:{}".format(uniq_labels))
+        print("clustering the data Ends here.....................................")
+    elif clustering_algo == "something":
+        pass
+        
     #create each folder for each cluster
     create_child_dirs(uniq_labels, clustered_data_path + "/")
     #move images to respective dirs
