@@ -4,8 +4,11 @@
 
 # import the necessary packages
 from helper_methods import *
+import pandas as pd
 from scipy.spatial import distance as dist
 from sklearn.cluster import MeanShift
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 import math 
 import numpy as np
 import argparse
@@ -47,11 +50,32 @@ try:
         for row in csvreader:
             img_vector_data['vectorised_data'].append([float(arr) for arr in row])
         print("Data import from csv file finished")
+
     # converting array to np.float type
-    converted_data = np.asarray(img_vector_data['vectorised_data']) #.astype(np.float64)       
-    #clustering the gathered data below
+    converted_data = np.asarray(img_vector_data['vectorised_data'])
+
+    print("converted_data is :{}".format(converted_data))
+
+    # PCA on this converted data:
+    # Scale using standard scalar on the datapoints
+    sc = StandardScaler()
+    sc.fit(converted_data)
+    scaled_converted_data = sc.transform(converted_data)
+    print(scaled_converted_data)
+    #initialize pca
+    pca = PCA(.99)
+    pca.fit(scaled_converted_data)
+    new_coms = pca.n_components_
+    new_data = pca.transform(scaled_converted_data)
+    print("original shape:{}".format(scaled_converted_data.shape))
+    print("pca transformed shape:{}".format(new_data.shape))
+    # print("output of PCA transform:{}".format(new_data))
+    print("New number of components are:{} out of 136".format(new_coms))
+    print("feature contribution to pca:{}".format(pca.components_))
+
+    # clustering the gathered data below
     ms = MeanShift(cluster_all=False)
-    ms.fit(img_vector_data['vectorised_data'])
+    ms.fit(converted_data)
     labels = ms.labels_
     cluster_centers = ms.cluster_centers_
     print(cluster_centers)
@@ -60,7 +84,7 @@ try:
     print("unique cluster labels:{}".format(labels))
     print("Number of labels calcualted:{}".format(len(labels)))
     print("NUmber of unique labels calculated:{}".format(uniq_labels))
-    #create each folder for each cluster
+    create each folder for each cluster
     create_child_dirs(uniq_labels, ini_data_path + "/")
     #move images to respective dirs
     # for image_title in sorted_images_array:

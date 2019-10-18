@@ -6,6 +6,8 @@
 from helper_methods import *
 from scipy.spatial import distance as dist
 from sklearn.cluster import MeanShift
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 import math 
 import numpy as np
 import argparse
@@ -17,7 +19,7 @@ import os
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--data-folder", default=None, required=True,
     help="path to csv data and images folder")
-ap.add_argument("-v", "--clustering", default=None, required=True,
+ap.add_argument("-c", "--clustering", default=None, required=True,
     help="clustering algorithm to be specified")
 args = vars(ap.parse_args())
 
@@ -58,12 +60,31 @@ try:
         print("Data import from csv file finished")
     # converting array to np.float type
     converted_data = np.asarray(img_vector_data['vectorised_data']) #.astype(np.float64)
-    print("image data converted to numy array..................................")       
+    print("image data converted to numpy array..................................") 
+    
+    # Apply PCA transform to converted data
+    # Scale using standard scalar on the datapoints
+    sc = StandardScaler()
+    sc.fit(converted_data)
+    scaled_converted_data = sc.transform(converted_data)
+    print(scaled_converted_data)
+    #initialize pca
+    pca = PCA(.99)
+    pca.fit(scaled_converted_data)
+    new_coms = pca.n_components_
+    pca_transformed_data = pca.transform(scaled_converted_data)
+    print("original shape:{}".format(scaled_converted_data.shape))
+    print("pca transformed shape:{}".format(pca_transformed_data.shape))
+    # print("output of PCA transform:{}".format(new_data))
+    print("New number of components are:{} out of 136".format(new_coms))
+    # print("feature contribution to pca:{}".format(pca.components_))
+ 
+
     #clustering the gathered data below
     print("clustering the data begins here.....................................")
     if clustering_algo == "meanshift":
         ms = MeanShift(cluster_all=False)
-        ms.fit(converted_data)
+        ms.fit(pca_transformed_data)
         labels = ms.labels_
         cluster_centers = ms.cluster_centers_
         print(cluster_centers)
