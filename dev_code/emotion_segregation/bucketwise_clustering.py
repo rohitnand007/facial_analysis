@@ -21,21 +21,28 @@ ap.add_argument("-v", "--data-folder", default=None, required=True,
     help="path to csv data and images folder")
 ap.add_argument("-c", "--clustering", default=None, required=True,
     help="clustering algorithm to be specified")
+ap.add_argument("-b", "--bucket_no:", default=None, required=True,
+    help="bucket number for reclustering again")
 args = vars(ap.parse_args())
 
 ini_data_path = args["data_folder"]
 clustering_algo = args["clustering"]
+bucket_no = args["bucket_no:"]
 print ini_data_path
 
-clustered_data_path = ini_data_path + "/"+ clustering_algo +"/"
+# clustered_data_path = ini_data_path + "/"+ clustering_algo +"/" 
 
-if not os.path.exists(clustered_data_path): os.mkdir(clustered_data_path) 
+# if not os.path.exists(clustered_data_path): os.mkdir(clustered_data_path) 
 
 video_file_name = ini_data_path.split('/')[-1]
 
 csv_file_path = ini_data_path + "/" + video_file_name + "_detected.csv"
 
-detected_images_path = ini_data_path + "/img_temp/detected_images/"
+detected_images_path = ini_data_path + "/" + clustering_algo + "/" + bucket_no + "/"
+
+clustered_data_path = detected_images_path +  clustering_algo +"/" 
+
+if not os.path.exists(clustered_data_path): os.mkdir(clustered_data_path) 
 
 sorted_images_array = sort_img_array(detected_images_path)
 
@@ -52,11 +59,18 @@ img_vector_data = {'vectorised_data':[]}
 # loop over frames from the video stream
 try:
     #import the data from csv into an ord-dict
+    current_img = iter(sorted_images_array)
     with open(csv_file_path, 'r') as csvfile:
         csvreader = csv.reader(csvfile)
         next(csvreader)
+        img_name = next(current_img,-1)
         for row in csvreader:
-            img_vector_data['vectorised_data'].append([float(arr) for arr in row])
+            if img_name != -1:
+                if (csvreader.line_num + 1) == int(img_name.split(".")[0]): 
+                    img_vector_data['vectorised_data'].append([float(arr) for arr in row])
+                    img_name = next(current_img,-1)
+            else:
+                break
         print("Data import from csv file finished")
     # converting array to np.float type
     converted_data = np.asarray(img_vector_data['vectorised_data']) #.astype(np.float64)

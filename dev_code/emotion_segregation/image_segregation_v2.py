@@ -1,3 +1,7 @@
+"""This script used for testing out the clustering process with pca and mean shift in your local machine.
+the better one is img_seg_v2_franklin.py .This is used as a kind of rough book for dev purposes
+"""
+
 # USAGE
 # python detect_blinks.py --shape-predictor shape_predictor_68_face_landmarks.dat --video blink_detection_demo.mp4
 # python detect_blinks.py --shape-predictor shape_predictor_68_face_landmarks.dat

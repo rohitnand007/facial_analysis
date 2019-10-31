@@ -1,3 +1,6 @@
+#Note: Redundent script as the actual one saves distance data in csv files, this does not. It just
+# processes teh video and clusters the images in buckets from the clustering algo used.
+
 # USAGE
 # python detect_blinks.py --shape-predictor shape_predictor_68_face_landmarks.dat --video blink_detection_demo.mp4
 # python detect_blinks.py --shape-predictor shape_predictor_68_face_landmarks.dat
