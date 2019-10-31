@@ -23,11 +23,14 @@ ap.add_argument("-c", "--clustering", default=None, required=True,
     help="clustering algorithm to be specified")
 ap.add_argument("-b", "--bucket_no:", default=None, required=True,
     help="bucket number for reclustering again")
+ap.add_argument("-p", "--pca", default=False, 
+    help="apply pca to the bucket again. Only True or False accepted")
 args = vars(ap.parse_args())
 
 ini_data_path = args["data_folder"]
 clustering_algo = args["clustering"]
 bucket_no = args["bucket_no:"]
+pca_option = args["pca"]
 print ini_data_path
 
 # clustered_data_path = ini_data_path + "/"+ clustering_algo +"/" 
@@ -66,7 +69,8 @@ try:
         img_name = next(current_img,-1)
         for row in csvreader:
             if img_name != -1:
-                if (csvreader.line_num + 1) == int(img_name.split(".")[0]): 
+                print(csvreader.line_num)
+                if (csvreader.line_num - 1) == int(img_name.split(".")[0]): 
                     img_vector_data['vectorised_data'].append([float(arr) for arr in row])
                     img_name = next(current_img,-1)
             else:
@@ -74,31 +78,35 @@ try:
         print("Data import from csv file finished")
     # converting array to np.float type
     converted_data = np.asarray(img_vector_data['vectorised_data']) #.astype(np.float64)
+    converted_data_as_input = converted_data
     print("image data converted to numpy array..................................") 
+    print(converted_data)
     
     # Apply PCA transform to converted data
     # Scale using standard scalar on the datapoints
-    sc = StandardScaler()
-    sc.fit(converted_data)
-    scaled_converted_data = sc.transform(converted_data)
-    print(scaled_converted_data)
-    #initialize pca
-    pca = PCA(.99)
-    pca.fit(scaled_converted_data)
-    new_coms = pca.n_components_
-    pca_transformed_data = pca.transform(scaled_converted_data)
-    print("original shape:{}".format(scaled_converted_data.shape))
-    print("pca transformed shape:{}".format(pca_transformed_data.shape))
-    # print("output of PCA transform:{}".format(new_data))
-    print("New number of components are:{} out of 136".format(new_coms))
-    # print("feature contribution to pca:{}".format(pca.components_))
+    if pca_option:
+        sc = StandardScaler()
+        sc.fit(converted_data)
+        scaled_converted_data = sc.transform(converted_data)
+        print(scaled_converted_data)
+        #initialize pca
+        pca = PCA(.99)
+        pca.fit(scaled_converted_data)
+        new_coms = pca.n_components_
+        pca_transformed_data = pca.transform(scaled_converted_data)
+        converted_data_as_input = pca_transformed_data
+        print("original shape:{}".format(scaled_converted_data.shape))
+        print("pca transformed shape:{}".format(pca_transformed_data.shape))
+        # print("output of PCA transform:{}".format(new_data))
+        print("New number of components are:{} out of 136".format(new_coms))
+        # print("feature contribution to pca:{}".format(pca.components_))
  
 
     #clustering the gathered data below
     print("clustering the data begins here.....................................")
     if clustering_algo == "meanshift":
         ms = MeanShift(cluster_all=False)
-        ms.fit(pca_transformed_data)
+        ms.fit(converted_data_as_input)
         labels = ms.labels_
         cluster_centers = ms.cluster_centers_
         print(cluster_centers)
