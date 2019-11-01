@@ -49,7 +49,7 @@ if not os.path.exists(clustered_data_path): os.mkdir(clustered_data_path)
 
 sorted_images_array = sort_img_array(detected_images_path)
 
-print(sorted_images_array)
+print(len(sorted_images_array))
 
 print("Detected images are sorted successfully............................")
 
@@ -69,18 +69,24 @@ try:
         img_name = next(current_img,-1)
         for row in csvreader:
             if img_name != -1:
-                print(csvreader.line_num)
+                print("line_num{} : {} img_name getting printed here is".format((csvreader.line_num - 1),img_name))
                 if (csvreader.line_num - 1) == int(img_name.split(".")[0]): 
                     img_vector_data['vectorised_data'].append([float(arr) for arr in row])
                     img_name = next(current_img,-1)
             else:
                 break
+                
         print("Data import from csv file finished")
     # converting array to np.float type
     converted_data = np.asarray(img_vector_data['vectorised_data']) #.astype(np.float64)
     converted_data_as_input = converted_data
+
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    print("number in folder: {} & number vectorised_: {}".format(len(sorted_images_array),len(img_vector_data['vectorised_data'])))
+
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+
     print("image data converted to numpy array..................................") 
-    print(converted_data)
     
     # Apply PCA transform to converted data
     # Scale using standard scalar on the datapoints
@@ -88,7 +94,6 @@ try:
         sc = StandardScaler()
         sc.fit(converted_data)
         scaled_converted_data = sc.transform(converted_data)
-        print(scaled_converted_data)
         #initialize pca
         pca = PCA(.99)
         pca.fit(scaled_converted_data)
@@ -109,7 +114,6 @@ try:
         ms.fit(converted_data_as_input)
         labels = ms.labels_
         cluster_centers = ms.cluster_centers_
-        print(cluster_centers)
         uniq_labels = np.unique(labels)
         n_clusters_ = len(np.unique(labels))
         print("unique cluster labels:{}".format(labels))
