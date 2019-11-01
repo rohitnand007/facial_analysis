@@ -74,7 +74,7 @@ try:
                     img_vector_data['vectorised_data'].append([float(arr) for arr in row])
                     img_name = next(current_img,-1)
             else:
-                break
+                pass
                 
         print("Data import from csv file finished")
     # converting array to np.float type
