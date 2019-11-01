@@ -111,7 +111,7 @@ try:
     print("clustering the data begins here.....................................")
     if clustering_algo == "meanshift":
         ms = MeanShift(cluster_all=False)
-        ms.fit(converted_data_as_input)
+        ms.fit(converted_data)
         labels = ms.labels_
         cluster_centers = ms.cluster_centers_
         uniq_labels = np.unique(labels)
