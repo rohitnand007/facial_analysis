@@ -6,6 +6,7 @@ the image """
 from helper_methods import *
 from scipy.spatial import distance as dist
 from sklearn.cluster import MeanShift
+from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import math 
@@ -94,8 +95,22 @@ try:
         print("Number of labels calcualted:{}".format(len(labels)))
         print("NUmber of unique labels calculated:{}".format(uniq_labels))
         print("clustering the data Ends here.....................................")
+    elif clustering_algo == "kmeans":
+        ms = MeanShift(cluster_all=False)
+        ms.fit(pca_transformed_data)
+        labels = ms.labels_
+        n_clusters_ = len(np.unique(labels))
+        km = KMeans(n_clusters=n_clusters_).fit(pca_transformed_data)
+        labels = km.labels_
+        cluster_centers = km.cluster_centers_
+        uniq_labels = np.unique(labels)
+        n_clusters_ = len(np.unique(labels))
+        print("unique cluster labels:{}".format(labels))
+        print("Number of labels calcualted:{}".format(len(labels)))
+        print("NUmber of unique labels calculated:{}".format(uniq_labels))
+        print("clustering the data Ends here.....................................")
     elif clustering_algo == "something":
-        pass
+        pass    
         
     #create each folder for each cluster
     create_child_dirs(uniq_labels, clustered_data_path + "/")
