@@ -23,7 +23,7 @@ ap.add_argument("-c", "--clustering", default=None, required=True,
     help="clustering algorithm to be specified")
 ap.add_argument("-b", "--bucket_no:", default=None, required=True,
     help="bucket number for reclustering again")
-ap.add_argument("-p", "--pca", default=False, 
+ap.add_argument("-p", "--pca", default=True, 
     help="apply pca to the bucket again. Only True or False accepted")
 args = vars(ap.parse_args())
 
@@ -39,7 +39,9 @@ print ini_data_path
 
 video_file_name = ini_data_path.split('/')[-1]
 
-csv_file_path = ini_data_path + "/" + video_file_name + "_detected.csv"
+detected_csv_file_path = ini_data_path + "/" + video_file_name + "_detected.csv"
+
+undetected_csv_file_path = ini_data_path + "/" + video_file_name + "_mapping_and_undetected.csv"
 
 detected_images_path = ini_data_path + "/" + clustering_algo + "/" + bucket_no + "/"
 
@@ -61,20 +63,31 @@ img_vector_data = {'vectorised_data':[]}
 
 # loop over frames from the video stream
 try:
+    #import dict for the detected row and cooresponding image mapping
+    mapping_data = {}
+    with open(undetected_csv_file_path,'r') as csvfile:
+        reader = csv.reader(csvfile)
+        next(reader)
+        for row in reader:
+            if row[1] == "undetected_image_filename":
+                break
+            else:
+                mapping_data[int(row[0].split(".")[0])] = int(row[1].split(".")[0])    
+    print(mapping_data)
     #import the data from csv into an ord-dict
     current_img = iter(sorted_images_array)
-    with open(csv_file_path, 'r') as csvfile:
+    with open(detected_csv_file_path, 'r') as csvfile:
         csvreader = csv.reader(csvfile)
         next(csvreader)
         img_name = next(current_img,-1)
         for row in csvreader:
             if img_name != -1:
-                print("line_num{} : {} img_name getting printed here is".format((csvreader.line_num - 1),img_name))
-                if (csvreader.line_num - 1) == int(img_name.split(".")[0]): 
+                print("line_num{} : {} img_name getting printed here is".format((mapping_data[csvreader.line_num]),img_name))
+                if (mapping_data[csvreader.line_num]) == int(img_name.split(".")[0]): 
                     img_vector_data['vectorised_data'].append([float(arr) for arr in row])
                     img_name = next(current_img,-1)
             else:
-                pass
+                break
                 
         print("Data import from csv file finished")
     # converting array to np.float type
@@ -111,7 +124,7 @@ try:
     print("clustering the data begins here.....................................")
     if clustering_algo == "meanshift":
         ms = MeanShift(cluster_all=False)
-        ms.fit(converted_data)
+        ms.fit(converted_data_as_input)
         labels = ms.labels_
         cluster_centers = ms.cluster_centers_
         uniq_labels = np.unique(labels)
