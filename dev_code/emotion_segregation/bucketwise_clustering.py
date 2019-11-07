@@ -2,6 +2,12 @@
 # It does not process the video to and apply any kind of facial rec algo or take any screenshots of 
 the image """
 
+"""
+*usage
+python bucketwise_clustering.py --clustering kmeans --pca False --output_folder kmeans_mouth 
+--data-folder data_folder/blink_test2 --bucket_path meanshift/0/
+"""
+
 # import the necessary packages
 from helper_methods import *
 from scipy.spatial import distance as dist
@@ -23,12 +29,14 @@ ap.add_argument("-v", "--data-folder", default=None, required=True,
     help="path to csv data and images folder")
 ap.add_argument("-c", "--clustering", default=None, required=True,
     help="clustering algorithm to be specified")
-ap.add_argument("-b", "--bucket_no:", default=None, required=True,
-    help="bucket number for reclustering again")
+ap.add_argument("-b", "--bucket_path", default=None, required=True,
+    help="bucket path after data_folder for reclustering again")
 ap.add_argument("-p", "--pca", default=True, 
     help="apply pca to the bucket again. Only True or False accepted")
 ap.add_argument("-o", "--output_folder", default=None,
     help="give output folder name if you want something different")
+ap.add_argument("-n","--cluster_count",default=5,
+    help="number of clusters for kmeans algorithm")
 args = vars(ap.parse_args())
 
 #get mouth co-ordinates
@@ -39,7 +47,7 @@ mouth = FACIAL_LANDMARKS_IDXS['mouth']
 
 ini_data_path = args["data_folder"]
 clustering_algo = args["clustering"]
-bucket_no = args["bucket_no:"]
+bucket_path = args["bucket_path"]
 pca_option = args["pca"]
 print(pca_option)
 output_folder = args["output_folder"] if args['output_folder'] != None else clustering_algo
@@ -55,7 +63,7 @@ detected_csv_file_path = ini_data_path + "/" + video_file_name + "_detected.csv"
 
 undetected_csv_file_path = ini_data_path + "/" + video_file_name + "_mapping_and_undetected.csv"
 
-detected_images_path = ini_data_path + "/" + clustering_algo + "/" + bucket_no + "/"
+detected_images_path = ini_data_path + "/" + bucket_path
 
 clustered_data_path = detected_images_path +  output_folder +"/" 
 
@@ -147,11 +155,12 @@ try:
         print("NUmber of unique labels calculated:{}".format(uniq_labels))
 
     elif clustering_algo == ("kmeans") or clustering_algo == "kmeans_mouth":
-        ms = MeanShift(cluster_all=False)
-        ms.fit(pca_transformed_data)
-        labels = ms.labels_
-        n_clusters_ = len(np.unique(labels))
-        km = KMeans(n_clusters=n_clusters_).fit(pca_transformed_data)
+        cluster_count = args["cluster_count"]
+        # ms = MeanShift(cluster_all=False)
+        # ms.fit(pca_transformed_data)
+        # labels = ms.labels_
+        # n_clusters_ = len(np.unique(labels))
+        km = KMeans(n_clusters=cluster_count).fit(converted_data_as_input)
         labels = km.labels_
         cluster_centers = km.cluster_centers_
         uniq_labels = np.unique(labels)
