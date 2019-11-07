@@ -6,8 +6,10 @@ the image """
 from helper_methods import *
 from scipy.spatial import distance as dist
 from sklearn.cluster import MeanShift
+from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from imutils.face_utils import FACIAL_LANDMARKS_IDXS
 import math 
 import numpy as np
 import argparse
@@ -25,12 +27,22 @@ ap.add_argument("-b", "--bucket_no:", default=None, required=True,
     help="bucket number for reclustering again")
 ap.add_argument("-p", "--pca", default=True, 
     help="apply pca to the bucket again. Only True or False accepted")
+ap.add_argument("-o", "--output_folder", default=None,
+    help="give output folder name if you want something different")
 args = vars(ap.parse_args())
+
+#get mouth co-ordinates
+mouth = FACIAL_LANDMARKS_IDXS['mouth']
+
+#get mouth data_points from image_vector data
+(mouth_start,mouth_end) = ((mouth[0]*2)-1, (mouth[1]*2)-1)
 
 ini_data_path = args["data_folder"]
 clustering_algo = args["clustering"]
 bucket_no = args["bucket_no:"]
 pca_option = args["pca"]
+print(pca_option)
+output_folder = args["output_folder"] if args['output_folder'] != None else clustering_algo
 print ini_data_path
 
 # clustered_data_path = ini_data_path + "/"+ clustering_algo +"/" 
@@ -45,7 +57,7 @@ undetected_csv_file_path = ini_data_path + "/" + video_file_name + "_mapping_and
 
 detected_images_path = ini_data_path + "/" + clustering_algo + "/" + bucket_no + "/"
 
-clustered_data_path = detected_images_path +  clustering_algo +"/" 
+clustered_data_path = detected_images_path +  output_folder +"/" 
 
 if not os.path.exists(clustered_data_path): os.mkdir(clustered_data_path) 
 
@@ -92,6 +104,7 @@ try:
         print("Data import from csv file finished")
     # converting array to np.float type
     converted_data = np.asarray(img_vector_data['vectorised_data']) #.astype(np.float64)
+    converted_data = converted_data[:,mouth_start:mouth_end]
     converted_data_as_input = converted_data
 
     print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
@@ -103,7 +116,7 @@ try:
     
     # Apply PCA transform to converted data
     # Scale using standard scalar on the datapoints
-    if pca_option:
+    if not pca_option=="False":
         sc = StandardScaler()
         sc.fit(converted_data)
         scaled_converted_data = sc.transform(converted_data)
@@ -122,7 +135,7 @@ try:
 
     #clustering the gathered data below
     print("clustering the data begins here.....................................")
-    if clustering_algo == "meanshift":
+    if clustering_algo == ("meanshift") or clustering_algo == "meanshift_mouth" :
         ms = MeanShift(cluster_all=False)
         ms.fit(converted_data_as_input)
         labels = ms.labels_
@@ -132,9 +145,25 @@ try:
         print("unique cluster labels:{}".format(labels))
         print("Number of labels calcualted:{}".format(len(labels)))
         print("NUmber of unique labels calculated:{}".format(uniq_labels))
+
+    elif clustering_algo == ("kmeans") or clustering_algo == "kmeans_mouth":
+        ms = MeanShift(cluster_all=False)
+        ms.fit(pca_transformed_data)
+        labels = ms.labels_
+        n_clusters_ = len(np.unique(labels))
+        km = KMeans(n_clusters=n_clusters_).fit(pca_transformed_data)
+        labels = km.labels_
+        cluster_centers = km.cluster_centers_
+        uniq_labels = np.unique(labels)
+        n_clusters_ = len(np.unique(labels))
+        print("unique cluster labels:{}".format(labels))
+        print("Number of labels calcualted:{}".format(len(labels)))
+        print("NUmber of unique labels calculated:{}".format(uniq_labels))
         print("clustering the data Ends here.....................................")
     elif clustering_algo == "something":
         pass
+    else:
+        pass        
         
     #create each folder for each cluster
     create_child_dirs(uniq_labels, clustered_data_path + "/")
