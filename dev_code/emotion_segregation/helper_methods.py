@@ -73,6 +73,7 @@ def sort_img_array(imgs_path):
     for root,dirs,files in os.walk(imgs_path):
         for name in files:
             if name.endswith('.jpg'): tmp_array.append(int(name.split(".")[0])) 
+        break    
     tmp_array.sort()
     for num in tmp_array:        
         final_array.append(str(num) + ".jpg")
