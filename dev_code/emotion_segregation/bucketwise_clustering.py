@@ -35,7 +35,7 @@ ap.add_argument("-p", "--pca", default=True,
     help="apply pca to the bucket again. Only True or False accepted")
 ap.add_argument("-o", "--output_folder", default=None,
     help="give output folder name if you want something different")
-ap.add_argument("-n","--cluster_count",default=5,
+ap.add_argument("-n","--cluster_count",default=15,
     help="number of clusters for kmeans algorithm")
 args = vars(ap.parse_args())
 
