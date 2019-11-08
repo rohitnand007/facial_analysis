@@ -15,6 +15,7 @@ from sklearn.cluster import MeanShift
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+import hdbscan
 from imutils.face_utils import FACIAL_LANDMARKS_IDXS
 import math 
 import numpy as np
@@ -112,7 +113,8 @@ try:
         print("Data import from csv file finished")
     # converting array to np.float type
     converted_data = np.asarray(img_vector_data['vectorised_data']) #.astype(np.float64)
-    converted_data = converted_data[:,mouth_start:mouth_end]
+    # pick only mouth points below:
+    #converted_data = converted_data[:,mouth_start:mouth_end]
     converted_data_as_input = converted_data
 
     print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
@@ -169,8 +171,21 @@ try:
         print("Number of labels calcualted:{}".format(len(labels)))
         print("NUmber of unique labels calculated:{}".format(uniq_labels))
         print("clustering the data Ends here.....................................")
+
+    elif clustering_algo == "hdbscan":
+        hdb = hdbscan.HDBSCAN() #min_cluster_size=10
+        hdb.fit(converted_data_as_input)
+        labels = hdb.labels_
+        uniq_labels = np.unique(labels)
+        print("Number of labels calcualted:{}".format(len(labels)))
+        print("NUmber of unique labels calculated:{}".format(labels.max()))
+        print("NUmber of unique labels calculated:{}".format(uniq_labels))
+        print("clustering the data Ends here.....................................")
+        print("The clustered data is from HDBSCAN algorithm")
+
     elif clustering_algo == "something":
-        pass
+        pass    
+
     else:
         pass        
         
