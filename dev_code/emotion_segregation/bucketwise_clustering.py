@@ -15,6 +15,7 @@ from sklearn.cluster import MeanShift
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from sklearn.manifold import TSNE
 import hdbscan
 from imutils.face_utils import FACIAL_LANDMARKS_IDXS
 import math 
@@ -135,17 +136,24 @@ try:
         pca.fit(scaled_converted_data)
         new_coms = pca.n_components_
         pca_transformed_data = pca.transform(scaled_converted_data)
-        converted_data_as_input = pca_transformed_data
         print("original shape:{}".format(scaled_converted_data.shape))
         print("pca transformed shape:{}".format(pca_transformed_data.shape))
         # print("output of PCA transform:{}".format(new_data))
         print("New number of components are:{} out of 136".format(new_coms))
         # print("feature contribution to pca:{}".format(pca.components_))
+        tsne_transformed_data = TSNE().fit_transform(pca_transformed_data) #random_state=RS
+        print("After PCA original shape:{}".format(pca_transformed_data.shape))
+        print("tsne transformed shape:{}".format(tsne_transformed_data.shape))
+        # print("output of PCA transform:{}".format(new_data))
+        # print("New number of components are:{} out of 136".format(new_coms))
+        converted_data_as_input = tsne_transformed_data
+        print("Tsne completed")
+
  
 
     #clustering the gathered data below
     print("clustering the data begins here.....................................")
-    if clustering_algo == ("meanshift") or clustering_algo == "meanshift_mouth" :
+    if clustering_algo == ("meanshift"):
         ms = MeanShift(cluster_all=False)
         ms.fit(converted_data_as_input)
         labels = ms.labels_
@@ -156,7 +164,7 @@ try:
         print("Number of labels calcualted:{}".format(len(labels)))
         print("NUmber of unique labels calculated:{}".format(uniq_labels))
 
-    elif clustering_algo == ("kmeans") or clustering_algo == "kmeans_mouth":
+    elif clustering_algo == ("kmeans"):
         cluster_count = args["cluster_count"]
         # ms = MeanShift(cluster_all=False)
         # ms.fit(pca_transformed_data)
