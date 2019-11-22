@@ -69,7 +69,7 @@ videos = []
 if args["video"] is None:
 	for root, dirs, files in os.walk(args["folder"]):
 		for f in files:
-			if f.endswith('.wmv'): videos.append(root + f)			
+			if (f.endswith('.wmv') or f.endswith('.mp4')): videos.append(root + f)			
 else:
 	videos = [args["video"]]
 
