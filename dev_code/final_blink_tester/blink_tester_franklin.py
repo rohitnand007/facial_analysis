@@ -34,7 +34,7 @@ def eye_aspect_ratio(eye):
 	return ear
 
 def collect_output_dir(path):
-	# path = "/na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/adult_06408/adult_06408/dropoff/06408_M87163738_visit3_20091105_assessment_SCIDII_CLH1.wmv"
+	# path = "/na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/BBP_20150/assessment_videos/Wisconsin/Incarcerated_juvenile/video.wmv"
 	a = path.split("/")
 	a = a[13:]
 	del a[-1]
@@ -73,7 +73,9 @@ if args["video"] is None:
 else:
 	videos = [args["video"]]
 
-print(videos)				
+print(videos)	
+
+video_count = 0			
  
 # define two constants, one for the eye aspect ratio to indicate
 # blink and then a second constant for the number of consecutive
@@ -82,9 +84,10 @@ EYE_AR_THRESH = 0.3
 EYE_AR_CONSEC_FRAMES = 3
 
 for video in videos:
+	video_count += 1
 	# create the output directory with same tree structure as input video path
 	just_video_name = video.split("/")[-1].split(".")[0]
-	output_result_path = os.path.expanduser("~") + "/../../../export/research/analysis/human/kkiehl/media/new_blinks_data/"
+	output_result_path = os.path.expanduser("~") + "/../../../export/research/analysis/human/kkiehl/shared/Projects/VideoAnalysis/BlinkAnalysis/juve_blinks_data/"
 	# output_result_path = os.path.expanduser("~") + "/test_dir/"
 	dirs_array = collect_output_dir(video) 
 	out_path =  create_child_dirs(dirs_array,output_result_path)
@@ -219,6 +222,11 @@ for video in videos:
 		with open(file_name, 'wb') as csvFile:
 			writer = csv.writer(csvFile)
 			writer.writerows(csvData) 
+
+		file1 = open("processed_videos_list.txt","a")
+		file1.write(str(video_count) + ":" +video)
+		file1.write("\n")
+		file1.close()	
 
 
 
