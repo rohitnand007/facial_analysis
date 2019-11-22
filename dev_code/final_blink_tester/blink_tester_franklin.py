@@ -74,6 +74,7 @@ else:
 	videos = [args["video"]]
 
 print(videos)	
+print(len(videos))
 
 video_count = 0			
  
