@@ -10,6 +10,7 @@ args = vars(ap.parse_args())
 files_folder = args["folder"]
 
 files_list = []
+blah = []
 
 def get_files_list(files_folder):
 
@@ -29,5 +30,13 @@ for i,chunk in enumerate(file_chunks):
 		writer = csv.writer(file)
 		for name in chunk:	
 			writer.writerow([name])
+
+# with open('pose_list_0.csv') as csv_file:
+#     csv_reader = csv.reader(csv_file, delimiter=',')
+#     for row in csv_reader:
+#     	blah.append(row[0])
+
+# print blah    	
+
 
 						
