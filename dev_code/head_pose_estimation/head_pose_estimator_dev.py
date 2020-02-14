@@ -164,6 +164,7 @@ for video in videos:
 	ref_frame = False
 	euler_angles_in_current_sec = {}
 	csvData = []
+	csvData1 = []
 
 	# loop over frames from the video stream
 	try:
@@ -211,7 +212,7 @@ for video in videos:
 
 						euler_angles_in_current_sec[detected_frames] = compare_euler_angles(10,ref_frame,(x_dist,y_dist,z_dist))	
 
-						# csvData.append([frame_counter,x_dist,y_dist,z_dist])
+						csvData1.append([frame_counter,x_dist,y_dist,z_dist])
 
 				if (current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec)):
 					cal_actual_sec = int(frame_counter/fps)
@@ -264,12 +265,22 @@ for video in videos:
 	finally:
 		pass
 		# csvData.insert(0,["frame_num","x", "y", "z"])
+		if not os.path.exists(out_path +"/"+just_video_name):
+			os.makedirs(out_path + "/"+just_video_name)
+
 		csvData.insert(0,["time_in_sec", "head_movement"])
-		file_name = out_path + "/" + just_video_name + ".csv"
+		file_name = out_path + "/" + just_video_name+"/"+ just_video_name + "_head_movement" + ".csv"
+
+		csvData1.insert(0,["frameNumber","x_angle", "y_angle", "z_angle"])
+		file_name1 = out_path + "/" + just_video_name+"/"+ just_video_name + "_euler_angles.csv"
 
 		with open(file_name, 'wb') as csvFile:
 			writer = csv.writer(csvFile)
 			writer.writerows(csvData) 
+
+		with open(file_name1, 'wb') as csvFile:
+			writer = csv.writer(csvFile)
+			writer.writerows(csvData1)	
 
 		file1 = open("processed_videos_list.txt","a")
 		file1.write(str(video_count) + ":" +video)
