@@ -212,6 +212,7 @@ for video in videos:
 
 						#setting the reference frame for the second
 						if not ref_frame:
+							print("Ref frame resetted..........................................")
 							ref_frame = (x_dist,y_dist,z_dist)
 
 						euler_angles_in_current_sec[detected_frames] = compare_euler_angles(10,ref_frame,(x_dist,y_dist,z_dist))	
