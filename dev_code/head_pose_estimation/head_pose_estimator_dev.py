@@ -131,7 +131,7 @@ def get_head_pose(shape):
 
 def compare_euler_angles(interval,ref_frame,actual_frame):
 	diff_x,diff_y = abs(ref_frame[1]-actual_frame[1]),abs(ref_frame[2]-actual_frame[2])	
-	return 1 if (diff_x < interval or diff_y < interval) else 0
+	return 1 if (diff_x > interval or diff_y > interval) else 0
 
 def check_for_head_movement(dict_of_values):
 	print(dict_of_values)
