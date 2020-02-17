@@ -20,7 +20,16 @@ def get_files_list(files_folder):
 					files_list.append(root + f)
 	return files_list
 
-a = get_files_list(files_folder)
+def get_files_list_only_pclr(files_folder):
+
+	for root, dirs, files in os.walk(files_folder):
+			for f in files:
+				if ((f.endswith('.wmv') or f.endswith('.mp4')) and 'PCLR' in f): 
+					files_list.append(root + f)
+	return files_list
+
+
+a = get_files_list_only_pclr(files_folder)
 
 file_chunks = [a[x:x+50] for x in xrange(0, len(a), 50)]
 
