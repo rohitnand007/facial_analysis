@@ -21,9 +21,9 @@ import os
 def collect_output_dir(path):
 	# path = "/na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/BBP_20150/assessment_videos/Wisconsin/Incarcerated_juvenile/video.wmv"
 	a = path.split("/")
-	a = a[13:]
+	# a = a[13:]
 	# a = a[2:]
-	del a[-1]
+	# del a[-1]
 	# a.append(just_video_name)
 	print("collect_output_dir: {}".format(a))
 	return a
@@ -182,7 +182,7 @@ for video in videos:
 				# it, and convert it to grayscale channels)
 
 				frame = imutils.resize(frame, width=450)
-				#frame = imutils.rotate_bound(frame, 270)
+				frame = imutils.rotate_bound(frame, 270)
 				gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 				frame_counter += 1
 				frames_in_sec += 1
@@ -215,7 +215,7 @@ for video in videos:
 							print("Ref frame resetted..........................................")
 							ref_frame = (x_dist,y_dist,z_dist)
 
-						euler_angles_in_current_sec[detected_frames] = compare_euler_angles(10,ref_frame,(x_dist,y_dist,z_dist))	
+						euler_angles_in_current_sec[detected_frames] = compare_euler_angles(5,ref_frame,(x_dist,y_dist,z_dist))	
 
 						csvData1.append([frame_counter,x_dist,y_dist,z_dist])
 

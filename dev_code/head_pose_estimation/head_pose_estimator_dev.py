@@ -215,7 +215,7 @@ for video in videos:
 							print("Ref frame resetted..........................................")
 							ref_frame = (x_dist,y_dist,z_dist)
 
-						euler_angles_in_current_sec[detected_frames] = compare_euler_angles(10,ref_frame,(x_dist,y_dist,z_dist))	
+						euler_angles_in_current_sec[detected_frames] = compare_euler_angles(5,ref_frame,(x_dist,y_dist,z_dist))	
 
 						csvData1.append([frame_counter,x_dist,y_dist,z_dist])
 
