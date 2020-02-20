@@ -21,9 +21,9 @@ import os
 def collect_output_dir(path):
 	# path = "/na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/BBP_20150/assessment_videos/Wisconsin/Incarcerated_juvenile/video.wmv"
 	a = path.split("/")
-	# a = a[13:]
+	a = a[13:]
 	# a = a[2:]
-	# del a[-1]
+	del a[-1]
 	# a.append(just_video_name)
 	print("collect_output_dir: {}".format(a))
 	return a

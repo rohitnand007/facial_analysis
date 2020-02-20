@@ -22,8 +22,8 @@ def collect_output_dir(path):
 	# path = "/na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/BBP_20150/assessment_videos/Wisconsin/Incarcerated_juvenile/video.wmv"
 	a = path.split("/")
 	# a = a[13:]
-	# a = a[2:]
-	del a[-1]
+	a = a[2:]
+	# del a[-1]
 	# a.append(just_video_name)
 	print("collect_output_dir: {}".format(a))
 	return a
@@ -42,6 +42,16 @@ def create_child_dirs(dirs_array, parent_dir):
     else:
         print("No parent dir created......@@@")	
         print("create_child_dirs: {}".format(parent_directory))
+
+def create_frames_dir(out_path,just_video_name):
+	ref_frames_path = out_path+"/"+just_video_name+"/"+"ref_frames/"
+	if not os.path.exists(out_path +"/"+just_video_name):
+		os.makedirs(out_path + "/"+just_video_name)
+	if os.path.exists(out_path + "/" + just_video_name):
+		os.makedirs(out_path + "/" +just_video_name+"/"+"ref_frames")
+	return ref_frames_path	
+
+
 
 def is_valid_sec(fraction,det_frame_count,fps):
 	return True if det_frame_count >= int(fraction * fps) else False
@@ -147,6 +157,8 @@ for video in videos:
 	# output_result_path = os.path.expanduser("~") + "/mrn_dev/facial_analysis/dev_code/head_pose_estimation/" + "/test_dir/"
 	dirs_array = collect_output_dir(video) 
 	out_path =  create_child_dirs(dirs_array,output_result_path)
+	ref_frames_path = create_frames_dir(out_path,just_video_name)
+	current_bucket = ""
 
 	# initialize dlib's face detector (HOG-based) and then create
 	# the facial landmark predictor
@@ -214,14 +226,28 @@ for video in videos:
 						if not ref_frame:
 							print("Ref frame resetted..........................................")
 							ref_frame = (x_dist,y_dist,z_dist)
+							current_bucket = ref_frames_path + str(total_sec)
+							os.mkdir(current_bucket)
+							current_bucket += "/"
+
 
 						euler_angles_in_current_sec[detected_frames] = compare_euler_angles(5,ref_frame,(x_dist,y_dist,z_dist))	
 
 						csvData1.append([frame_counter,x_dist,y_dist,z_dist])
+						img_name = current_bucket+ "{}.png".format(frame_counter)
+	  					cv2.imwrite(img_name, frame)
 
 				if (current_sec == 1 and detected_frames >= int(0.6 * frames_in_sec)):
 					cal_actual_sec = int(frame_counter/fps)
-					csvData.append([cal_actual_sec,check_for_head_movement(euler_angles_in_current_sec)])
+					# csvData.append([cal_actual_sec,check_for_head_movement(euler_angles_in_current_sec)])
+					csvData.append([total_sec,check_for_head_movement(euler_angles_in_current_sec)])
+					##writing frame values to file start
+
+					file11 = open(current_bucket+str(total_sec)+".txt","a")
+					file11.write(str(euler_angles_in_current_sec))
+					file11.close()
+
+					##closing frame values file ends
 					current_sec = 0	
 					ref_frame = False
 					euler_angles_in_current_sec = {}
@@ -229,38 +255,16 @@ for video in videos:
 					frames_in_sec = 1
 				elif (current_sec == 1 and detected_frames < int(0.6 * frames_in_sec)):
 					cal_actual_sec = int(frame_counter/fps)
-					csvData.append([cal_actual_sec, -1])
+					# csvData.append([cal_actual_sec, -1])
+					csvData.append([total_sec, -1])
 					current_sec = 0	
 					ref_frame = False
 					euler_angles_in_current_sec = {}
 					detected_frames = 0	
 					frames_in_sec = 1	
 
-
-				# 		for (x, y) in shape:
-				# 			cv2.circle(frame, (x, y), 1, (0, 0, 255), -1)
-
-				# 		for start, end in line_pairs:
-				# 			cv2.line(frame, reprojectdst[start], reprojectdst[end], (0, 0, 255))
-
-				# 		cv2.putText(frame, "X: " + "{:7.2f}".format(x_dist), (20, 20), cv2.FONT_HERSHEY_SIMPLEX,
-				# 		            0.75, (0, 0, 0), thickness=2)
-				# 		cv2.putText(frame, "Y: " + "{:7.2f}".format(y_dist), (20, 50), cv2.FONT_HERSHEY_SIMPLEX,
-				# 		            0.75, (0, 0, 0), thickness=2)
-				# 		cv2.putText(frame, "Z: " + "{:7.2f}".format(z_dist), (20, 80), cv2.FONT_HERSHEY_SIMPLEX,
-				# 		            0.75, (0, 0, 0), thickness=2)
-				# cv2.imshow("demo", frame)
-
-				if cv2.waitKey(1) & 0xFF == ord('q'):
-					break
-
-								
-
 			else:
-				break
-		# do a bit of cleanup
-		cv2.destroyAllWindows()
-		# vs.stop()		
+				break	
 
 	except Exception as e:
 		pass
@@ -270,8 +274,8 @@ for video in videos:
 	finally:
 		pass
 		# csvData.insert(0,["frame_num","x", "y", "z"])
-		if not os.path.exists(out_path +"/"+just_video_name):
-			os.makedirs(out_path + "/"+just_video_name)
+		# if not os.path.exists(out_path +"/"+just_video_name):
+		# 	os.makedirs(out_path + "/"+just_video_name)
 
 		csvData.insert(0,["time_in_sec", "head_movement"])
 		file_name = out_path + "/" + just_video_name+"/"+ just_video_name + "_head_movement" + ".csv"
