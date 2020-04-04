@@ -172,7 +172,8 @@ for ursi,file_path_arr in sorted_files_dict.items():
             #     csvData.append(d)
             # file_name = video.split("/")[-1].split(".")[0] + ".csv"
 
-            file1 =  open(csv_file_path.split(".")[0]+".txt", 'w+')
+            # file1 =  open(csv_file_path.split(".")[0]+".txt", 'w+')
+            file1 = open(os.getcwd()+"/cluster_txt/"+csv_file_path.split(".")[0].split("/")[-1]+".txt", 'w+')
             file1.write("Number of labels calcualted:{}".format(len(labels))+"\n") 
             file1.write("Number of unique labels calculated:{}".format(uniq_labels)+"\n")
             file1.write("Uniq label counter dictionary:{} ".format(uniq_lable_counter))
