@@ -22,8 +22,8 @@ def collect_output_dir(path):
 	# path = "/na/homes/ryerramsetty/../../../export/research/analysis/human/kkiehl/media/BBP_20150/assessment_videos/Wisconsin/Incarcerated_juvenile/video.wmv"
 	a = path.split("/")
 	# a = a[13:]
-	a = a[2:]
-	# del a[-1]
+	# a = a[2:]
+	del a[-1]
 	# a.append(just_video_name)
 	print("collect_output_dir: {}".format(a))
 	return a
@@ -194,7 +194,7 @@ for video in videos:
 				# it, and convert it to grayscale channels)
 
 				frame = imutils.resize(frame, width=450)
-				#frame = imutils.rotate_bound(frame, 270)
+				frame = imutils.rotate_bound(frame, 270)
 				gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 				frame_counter += 1
 				frames_in_sec += 1
@@ -233,7 +233,7 @@ for video in videos:
 
 						euler_angles_in_current_sec[detected_frames] = compare_euler_angles(5,ref_frame,(x_dist,y_dist,z_dist))	
 
-						csvData1.append([frame_counter,x_dist,y_dist,z_dist])
+						csvData1.append([frame_counter,x_dist,y_dist,z_dist,int(frame_counter/fps)])
 						img_name = current_bucket+ "{}.png".format(frame_counter)
 	  					cv2.imwrite(img_name, frame)
 
@@ -280,7 +280,7 @@ for video in videos:
 		csvData.insert(0,["time_in_sec", "head_movement"])
 		file_name = out_path + "/" + just_video_name+"/"+ just_video_name + "_head_movement" + ".csv"
 
-		csvData1.insert(0,["frameNumber","x_angle", "y_angle", "z_angle"])
+		csvData1.insert(0,["frameNumber","x_angle", "y_angle", "z_angle","in_sec"])
 		file_name1 = out_path + "/" + just_video_name+"/"+ just_video_name + "_euler_angles.csv"
 
 		with open(file_name, 'wb') as csvFile:
