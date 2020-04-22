@@ -137,7 +137,7 @@ def get_head_pose(shape):
     pose_mat = cv2.hconcat((rotation_mat, translation_vec))
     _, _, _, _, _, _, euler_angle = cv2.decomposeProjectionMatrix(pose_mat)
 
-    return reprojectdst, euler_angle
+    return reprojectdst, euler_angle,rotation_vec,translation_vec
 
 def compare_euler_angles(interval,ref_frame,actual_frame):
 	diff_x,diff_y,diff_z = abs(ref_frame[0]-actual_frame[0]),abs(ref_frame[1]-actual_frame[1]),abs(ref_frame[2]-actual_frame[2])	
@@ -219,7 +219,7 @@ for video in videos:
 						# array
 						shape = predictor(gray, rect)
 						shape = face_utils.shape_to_np(shape)
-						reprojectdst, euler_angle = get_head_pose(shape)
+						reprojectdst, euler_angle, rotation_vec,translation_vec = get_head_pose(shape)
 						x_dist, y_dist, z_dist = euler_angle[0,0], euler_angle[1,0], euler_angle[2,0]
 
 						#setting the reference frame for the second
@@ -233,7 +233,7 @@ for video in videos:
 
 						euler_angles_in_current_sec[detected_frames] = compare_euler_angles(5,ref_frame,(x_dist,y_dist,z_dist))	
 
-						csvData1.append([frame_counter,x_dist,y_dist,z_dist,int(frame_counter/fps)])
+						csvData1.append([frame_counter,x_dist,y_dist,z_dist,rotation_vec,translation_vec,int(frame_counter/fps)])
 						img_name = current_bucket+ "{}.png".format(frame_counter)
 	  					cv2.imwrite(img_name, frame)
 
@@ -280,7 +280,7 @@ for video in videos:
 		csvData.insert(0,["time_in_sec", "head_movement"])
 		file_name = out_path + "/" + just_video_name+"/"+ just_video_name + "_head_movement" + ".csv"
 
-		csvData1.insert(0,["frameNumber","x_angle", "y_angle", "z_angle","in_sec"])
+		csvData1.insert(0,["frameNumber","x_angle", "y_angle", "z_angle","rotation_vec","translation_vec", "in_sec"])
 		file_name1 = out_path + "/" + just_video_name+"/"+ just_video_name + "_euler_angles.csv"
 
 		with open(file_name, 'wb') as csvFile:
