@@ -142,8 +142,8 @@ for video in videos:
 	video_count += 1
 	# create the output directory with same tree structure as input video path
 	just_video_name = video.split("/")[-1].split(".")[0]
-	# output_result_path = os.path.expanduser("~") + "/../../../export/research/analysis/human/kkiehl/shared/Projects/VideoAnalysis/BlinkAnalysis/juve_blinks_data/"
-	output_result_path = os.getcwd() + "/head_pose_results/"
+	output_result_path = os.path.expanduser("~") + "/../../../export/research/analysis/human/kkiehl/shared/Projects/VideoAnalysis/latest_head_pose_results/"
+	# output_result_path = os.getcwd() + "/head_pose_results/"
 	# output_result_path = os.path.expanduser("~") + "/mrn_dev/facial_analysis/dev_code/head_pose_estimation/" + "/test_dir/"
 	dirs_array = collect_output_dir(video) 
 	out_path =  create_child_dirs(dirs_array,output_result_path)
