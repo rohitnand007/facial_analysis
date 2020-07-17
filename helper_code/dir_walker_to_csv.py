@@ -28,13 +28,21 @@ def get_files_list_only_pclr(files_folder):
 					files_list.append(root + f)
 	return files_list
 
+def get_files_list_only_skid(files_folder):
+	for root, dirs, files in os.walk(files_folder):
+			for f in files:
+				if ((f.endswith('.wmv') or f.endswith('.mp4')) and 'SCID' in f): 
+					files_list.append(root + f)
+	return files_list
 
-a = get_files_list_only_pclr(files_folder)
+
+
+a = get_files_list(files_folder)
 
 file_chunks = [a[x:x+50] for x in xrange(0, len(a), 50)]
 
 for i,chunk in enumerate(file_chunks):
-	output_filename = 'output_csvs/pose_list_' + str(i) + ".csv" 
+	output_filename = 'output_csvs/juve_pose_list_' + str(i) + ".csv" 
 	with open(output_filename, 'w') as file:
 		writer = csv.writer(file)
 		for name in chunk:	
